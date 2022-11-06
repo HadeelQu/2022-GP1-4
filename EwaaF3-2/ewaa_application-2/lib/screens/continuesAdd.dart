@@ -47,13 +47,13 @@ class _ContinuesAddState extends State<ContinuesAdd> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('error'),
+          title: Text('خطأ'),
           content: Text(error),
           actions: <Widget>[
             TextButton(
-              onPressed: () => Navigator.pop(context, 'OK'),
+              onPressed: () => Navigator.pop(context, 'تمام'),
               child: const Text(
-                'OK',
+                'تمام',
                 style: TextStyle(
                     color: Color.fromRGBO(116, 98, 133, 1), fontSize: 15),
               ),
