@@ -39,4 +39,4 @@ is an android mobile application that provides a platform to increase awareness 
  6- The app will begin installing on your device. <br/> <br/>
  
  ## 🔴 note: you can use the online emulator, check the link below:
-      ![ApkOnline](https://chrome.google.com/webstore/detail/apkonline-apk-manager-for/lnhnebkkgjmlgomfkkmkoaefbknopmja)
+- [ApkOnline](https://chrome.google.com/webstore/detail/apkonline-apk-manager-for/lnhnebkkgjmlgomfkkmkoaefbknopmja)
