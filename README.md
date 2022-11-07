@@ -1,7 +1,7 @@
 
 
 
-![Ewaa logo](<img width="459" alt="Picture1" src="https://user-images.githubusercontent.com/98472074/200324568-256d25a3-a3c0-4808-959e-e9a3a85f20c5.png">)
+![Ewaa logo](<img width="459" alt="Picture1" src="https://user-images.githubusercontent.com/98472074/200326386-ca95ace8-db75-40dc-8cc2-b40d375e7aa2.png">)
 
 
 
