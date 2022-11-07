@@ -33,7 +33,7 @@ is an android mobile application that provides a platform to increase awareness 
 
  1- Open your browser <br/>
  2- Find the APK file you want to download <br/>
- 3- Click on the APK file and then click on **appEwaa.apk** it will start downloading <br/>  
+ 3- Click on the APK file and then click on **app-release.apk** it will start downloading <br/>  
  4- Open Downloads <br/>
  5- Tap on the APK file and tap **Yes** when prompted <br/>
  6- The app will begin installing on your device. <br/> <br/>
