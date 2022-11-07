@@ -6,10 +6,6 @@
 
 
 
-
-
-
-
 # 🌟 About Ewaa - إيواء
 **Ewaa - إيواء :-** <br/>
 is an android mobile application that provides a platform to increase awareness regarding pet adoption in Saudi Arabia by digitalizing and facilitating the adoption process, helping pet owners to find loving and suitable homes for their pets and matching pet adopters with and facilitating communication between pet owners and pet adopters to make the adoption process more efficient. 
@@ -43,4 +39,4 @@ is an android mobile application that provides a platform to increase awareness 
  6- The app will begin installing on your device. <br/> <br/>
  
  ## 🔴 note: you can use the online emulator, check the link below:
-      
+      ![ApkOnline](https://chrome.google.com/webstore/detail/apkonline-apk-manager-for/lnhnebkkgjmlgomfkkmkoaefbknopmja)
