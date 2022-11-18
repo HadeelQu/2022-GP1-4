@@ -35,6 +35,7 @@ class _ContinuesAddState extends State<ContinuesAdd> {
   TextEditingController _nameOfHospital = TextEditingController();
   bool? _checkbox = false;
   var _petSelectedList = [];
+  TextEditingController _personailty = TextEditingController();
 
   bool selected = false;
   final _auth = FirebaseAuth.instance;
@@ -86,6 +87,13 @@ class _ContinuesAddState extends State<ContinuesAdd> {
       style: TextStyle(
           color: Style.purpole, fontFamily: 'ElMessiri', fontSize: 15),
     );
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _petSelectedList;
   }
 
   @override
@@ -164,6 +172,26 @@ class _ContinuesAddState extends State<ContinuesAdd> {
           _isloading = false;
         });
       }
+    }
+
+    addAnotherPer() {
+      return Container(
+        margin: EdgeInsets.symmetric(horizontal: 25),
+        child: FileldsAdd("الشخصية", _personailty, TextInputType.text, (value) {
+          if (value.isEmpty) {
+            return "الرجاء اكمال بيانات الشخصيه";
+          }
+          if (!RegExp(r'^[\u0600-\u065F\u066A-\u06EF\u06FA-\u06FFa-zA-Z-_ ]+$')
+              .hasMatch(value)) {
+            return "الرجاء ادخال اسم فقط يحتوي علي حروف";
+          }
+          print(value);
+
+          _petSelectedList.add(value);
+
+          return null;
+        }, 1, 15),
+      );
     }
 
     return SafeArea(
@@ -587,6 +615,43 @@ class _ContinuesAddState extends State<ContinuesAdd> {
                                           Style.textFieldsColor_lightpink,
                                     )).toList()),
                         SizedBox(
+                          height: 15,
+                        ),
+                        _petSelectedList.contains("اخرى")
+                            ? Stack(children: [
+                                addAnotherPer(),
+                                Positioned(
+                                  left: 0,
+                                  bottom: 3,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: InkWell(
+                                      onTap: () {
+                                        if (!_personailty.text.isEmpty) {
+                                          _petSelectedList
+                                              .add(_personailty.text);
+                                          _personailty.clear();
+                                        }
+                                      },
+                                      child: Container(
+                                          decoration: BoxDecoration(
+                                              color: Style.buttonColor_pink,
+                                              border: Border.all(
+                                                width: 2,
+                                                color: Style.buttonColor_pink,
+                                              ),
+                                              shape: BoxShape.circle),
+                                          child: Icon(
+                                            Icons.add,
+                                            color: Colors.white,
+                                            size: 20,
+                                          )),
+                                    ),
+                                  ),
+                                ),
+                              ])
+                            : Container(),
+                        SizedBox(
                           height: 30,
                         ),
                         _isloading
@@ -625,6 +690,8 @@ class _ContinuesAddState extends State<ContinuesAdd> {
                                       }
                                       if (isComplete) {
                                         add();
+                                        _petSelectedList.remove("اخرى");
+                                        print(_petSelectedList);
                                       }
                                     } else {
                                       _showErrorDialog(
