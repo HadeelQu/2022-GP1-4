@@ -52,6 +52,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   modal_progress_hud_nsn: ^0.3.0
   shared_preferences: ^2.0.15
+  phone_number: ^1.0.0
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
 

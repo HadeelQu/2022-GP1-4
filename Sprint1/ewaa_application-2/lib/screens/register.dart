@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:email_validator/email_validator.dart';
 
 import '../widgets/textFields.dart';
+import 'package:phone_number/phone_number.dart';
 
 class Register extends StatefulWidget {
   static const String screenRoute = "reister_page";
@@ -185,14 +186,15 @@ class _RegisterState extends State<Register> {
                       ),
                       TextFields("رقم الهاتف", Icons.phone, TextInputType.phone,
                           _phoneNumber, (phoneNumber) {
+                        var regex = RegExp(
+                            r"^(009665|9665|\+9665|05|5)(5|0|3|6|4|9|1|8|7)([0-9]{7})$");
                         String patttern = r'(^[0-9]*$)';
                         RegExp regExp = new RegExp(patttern);
                         if (phoneNumber!.isEmpty) {
                           return "الرجاء ادخال رقم الهاتف";
-                        } else if (phoneNumber.length != 10) {
+                        }
+                        if (!regex.hasMatch(phoneNumber)) {
                           return "رقم الهاتف غير صحيح";
-                        } else if (!regExp.hasMatch(phoneNumber)) {
-                          return "رقم الهاتف يجب ان يحتوي فقط على ارقام";
                         }
 
                         return null;
@@ -205,7 +207,11 @@ class _RegisterState extends State<Register> {
                         Icons.key,
                         TextInputType.visiblePassword,
                         _passward,
-                        (passward) {},
+                        (passward) {
+                          if (passward.toString().isEmpty) {
+                            return "يرجى ادخال كلمه المرور";
+                          }
+                        },
                         Icons.remove_red_eye,
                         true,
                       ),
@@ -218,6 +224,9 @@ class _RegisterState extends State<Register> {
                         TextInputType.visiblePassword,
                         _repeatePassward,
                         (repeatePassward) {
+                          if (repeatePassward.toString().isEmpty) {
+                            return "يرجى ادخال تاكيد كلمه المرور";
+                          }
                           if (_passward.text != _repeatePassward.text) {
                             return "كلمه المرور غير متطابقة";
                           }
