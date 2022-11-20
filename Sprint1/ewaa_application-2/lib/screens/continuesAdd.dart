@@ -13,9 +13,11 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:uuid/uuid.dart';
 
+import '../chipData.dart';
 import '../style.dart';
 import '../widgets/button.dart';
 import '../widgets/fieldAdd.dart';
+import 'dart:io';
 
 class ContinuesAdd extends StatefulWidget {
   static const String screenRoute = "continuesAdd_page";
@@ -36,6 +38,8 @@ class _ContinuesAddState extends State<ContinuesAdd> {
   bool? _checkbox = false;
   var _petSelectedList = [];
   TextEditingController _personailty = TextEditingController();
+  var anotherPersonailty = [];
+  var petPersonailty = [];
 
   bool selected = false;
   final _auth = FirebaseAuth.instance;
@@ -43,6 +47,7 @@ class _ContinuesAddState extends State<ContinuesAdd> {
   String? url;
   int numberOfAdd = 0;
   bool _isloading = false;
+
   void _showErrorDialog(error) {
     showDialog(
       context: context,
@@ -87,13 +92,6 @@ class _ContinuesAddState extends State<ContinuesAdd> {
       style: TextStyle(
           color: Style.purpole, fontFamily: 'ElMessiri', fontSize: 15),
     );
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _petSelectedList;
   }
 
   @override
@@ -174,6 +172,19 @@ class _ContinuesAddState extends State<ContinuesAdd> {
       }
     }
 
+    @override
+    void initState() {
+      // TODO: implement initState
+      super.initState();
+      anotherPersonailty = [];
+    }
+
+    if (type == "قط") {
+      petPersonailty = CatPersonailty.Personailty;
+    } else {
+      petPersonailty = DogPersonailty.Personailty;
+    }
+
     addAnotherPer() {
       return Container(
         margin: EdgeInsets.symmetric(horizontal: 25),
@@ -186,8 +197,11 @@ class _ContinuesAddState extends State<ContinuesAdd> {
             return "الرجاء ادخال اسم فقط يحتوي علي حروف";
           }
           print(value);
+          // setState(() {
+          //   _petSelectedList.add(value);
+          // });
 
-          _petSelectedList.add(value);
+          //anotherPersonailty.add(value);
 
           return null;
         }, 1, 15),
@@ -571,9 +585,8 @@ class _ContinuesAddState extends State<ContinuesAdd> {
                             verticalDirection: VerticalDirection.down,
                             runSpacing: 8,
                             direction: Axis.horizontal,
-                            children: type == "قط"
-                                ? CatPersonailty.Personailty.map((chip) =>
-                                    FilterChip(
+                            children: petPersonailty
+                                .map((chip) => FilterChip(
                                       pressElevation: 17,
                                       selected:
                                           _petSelectedList.contains(chip.label),
@@ -592,28 +605,8 @@ class _ContinuesAddState extends State<ContinuesAdd> {
                                       label: Text(chip.label.toString()),
                                       backgroundColor:
                                           Style.textFieldsColor_lightpink,
-                                    )).toList()
-                                : DogPersonailty.Personailty.map((chip) =>
-                                    FilterChip(
-                                      pressElevation: 17,
-                                      selected:
-                                          _petSelectedList.contains(chip.label),
-                                      onSelected: (value) {
-                                        setState(() {
-                                          if (value) {
-                                            _petSelectedList.add(chip.label);
-                                          } else {
-                                            _petSelectedList.removeWhere(
-                                                (label) => label == chip.label);
-                                          }
-                                        });
-                                      },
-                                      selectedColor: Style.buttonColor_pink,
-                                      labelPadding: EdgeInsets.all(4),
-                                      label: Text(chip.label.toString()),
-                                      backgroundColor:
-                                          Style.textFieldsColor_lightpink,
-                                    )).toList()),
+                                    ))
+                                .toList()),
                         SizedBox(
                           height: 15,
                         ),
@@ -628,9 +621,29 @@ class _ContinuesAddState extends State<ContinuesAdd> {
                                     child: InkWell(
                                       onTap: () {
                                         if (!_personailty.text.isEmpty) {
-                                          _petSelectedList
-                                              .add(_personailty.text);
-                                          _personailty.clear();
+                                          setState(() {
+                                            var newPer = new ChipData(
+                                              label: _personailty.text,
+                                              isSelected: false,
+                                              backgrondColor: Style.purpole,
+                                              breeds: "",
+                                            );
+
+                                            petPersonailty.add(newPer);
+
+                                            // anotherPersonailty.add(ChipData(
+                                            //   label: _personailty.text,
+                                            //   isSelected: false,
+                                            //   backgrondColor: Style.purpole,
+                                            //   breeds: "",
+                                            // ));
+                                            _petSelectedList
+                                                .add(_personailty.text);
+                                            _personailty.clear();
+                                            //print(newPer.label);
+                                            anotherPersonailty
+                                                .add(newPer.label);
+                                          });
                                         }
                                       },
                                       child: Container(
@@ -691,7 +704,27 @@ class _ContinuesAddState extends State<ContinuesAdd> {
                                       if (isComplete) {
                                         add();
                                         _petSelectedList.remove("اخرى");
+                                        if (!_personailty.text.isEmpty) {
+                                          _petSelectedList
+                                              .add(_personailty.text);
+                                        }
+                                        // anotherPersonailty.map(
+                                        //   (chip) =>
+                                        //       print(chip.label.toString()),
+                                        // );
+                                        //petPersonailty = anotherPersonailty;
+                                        setState(() {
+                                          anotherPersonailty.forEach((labl2) =>
+                                              petPersonailty.removeWhere(
+                                                  (chip) =>
+                                                      chip.label.toString() ==
+                                                      labl2));
+                                        });
+
+                                        print(anotherPersonailty.length);
                                         print(_petSelectedList);
+
+                                        // print("another: $anotherPersonailty");
                                       }
                                     } else {
                                       _showErrorDialog(
