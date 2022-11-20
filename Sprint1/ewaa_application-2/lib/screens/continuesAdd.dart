@@ -40,6 +40,7 @@ class _ContinuesAddState extends State<ContinuesAdd> {
   TextEditingController _personailty = TextEditingController();
   var anotherPersonailty = [];
   var petPersonailty = [];
+  var petPersonailty2 = [];
 
   bool selected = false;
   final _auth = FirebaseAuth.instance;
@@ -184,14 +185,15 @@ class _ContinuesAddState extends State<ContinuesAdd> {
       //     element.breeds.toString() == breed ||
       //     element.breeds.toString() == "All").toList();
       ////
+      //petPersonailty2 = [...petPersonailty];
       petPersonailty = CatPersonailty.Personailty;
-      petPersonailty.removeWhere((chip) => chip.breeds.toString() != breed);
-      petPersonailty.add(ChipData(
-        label: "اخرى",
-        isSelected: false,
-        backgrondColor: Style.purpole,
-        breeds: "",
-      ));
+      // petPersonailty.removeWhere((chip) => chip.breeds.toString() != breed);
+      // petPersonailty.add(ChipData(
+      //   label: "اخرى",
+      //   isSelected: false,
+      //   backgrondColor: Style.purpole,
+      //   breeds: "",
+      // ));
     } else {
       petPersonailty = DogPersonailty.Personailty;
     }
@@ -737,6 +739,9 @@ class _ContinuesAddState extends State<ContinuesAdd> {
                                                   (chip) =>
                                                       chip.label.toString() ==
                                                       labl2));
+                                          petPersonailty2.forEach((element) {
+                                            petPersonailty.add(element);
+                                          });
                                         });
 
                                         print(anotherPersonailty.length);
