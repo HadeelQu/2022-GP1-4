@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ewaa_application/catPersonailty.dart';
@@ -181,21 +182,19 @@ class _ContinuesAddState extends State<ContinuesAdd> {
     }
 
     if (type == "قط") {
-      // petPersonailty = CatPersonailty.Personailty.where((element) =>
-      //     element.breeds.toString() == breed ||
-      //     element.breeds.toString() == "All").toList();
-      ////
-      //petPersonailty2 = [...petPersonailty];
-      petPersonailty = CatPersonailty.Personailty;
-      // petPersonailty.removeWhere((chip) => chip.breeds.toString() != breed);
-      // petPersonailty.add(ChipData(
-      //   label: "اخرى",
-      //   isSelected: false,
-      //   backgrondColor: Style.purpole,
-      //   breeds: "",
-      // ));
+      if (breed == "اخرى") {
+        petPersonailty = CatPersonailty.Personailty.getRange(0, 9).toList();
+      } else {
+        petPersonailty = CatPersonailty.Personailty.where((element) =>
+            element.breeds == breed || element.breeds == "الكل").toList();
+      }
     } else {
-      petPersonailty = DogPersonailty.Personailty;
+      if (breed == "اخرى") {
+        petPersonailty = DogPersonailty.Personailty.getRange(0, 9).toList();
+      } else {
+        petPersonailty = DogPersonailty.Personailty.where((element) =>
+            element.breeds == breed || element.breeds == "الكل").toList();
+      }
     }
 
     addAnotherPer() {
@@ -624,65 +623,7 @@ class _ContinuesAddState extends State<ContinuesAdd> {
                           height: 15,
                         ),
                         _petSelectedList.contains("اخرى")
-                            ? Stack(children: [
-                                addAnotherPer(),
-                                Positioned(
-                                  left: 0,
-                                  bottom: 3,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(12.0),
-                                    child: InkWell(
-                                      onTap: () {
-                                        if (!_personailty.text.isEmpty) {
-                                          setState(() {
-                                            var newPer = new ChipData(
-                                              label: _personailty.text,
-                                              isSelected: false,
-                                              backgrondColor: Style.purpole,
-                                              breeds: "",
-                                            );
-
-                                            petPersonailty.add(ChipData(
-                                              label: _personailty.text,
-                                              isSelected: false,
-                                              backgrondColor: Style.purpole,
-                                              breeds: breed,
-                                            ));
-
-                                            // anotherPersonailty.add(ChipData(
-                                            //   label: _personailty.text,
-                                            //   isSelected: false,
-                                            //   backgrondColor: Style.purpole,
-                                            //   breeds: "",
-                                            // ));
-                                            _petSelectedList
-                                                .add(_personailty.text);
-                                            _personailty.clear();
-                                            //print(newPer.label);
-
-                                            anotherPersonailty
-                                                .add(newPer.label);
-                                            print(petPersonailty);
-                                          });
-                                        }
-                                      },
-                                      child: Container(
-                                          decoration: BoxDecoration(
-                                              color: Style.buttonColor_pink,
-                                              border: Border.all(
-                                                width: 2,
-                                                color: Style.buttonColor_pink,
-                                              ),
-                                              shape: BoxShape.circle),
-                                          child: Icon(
-                                            Icons.add,
-                                            color: Colors.white,
-                                            size: 20,
-                                          )),
-                                    ),
-                                  ),
-                                ),
-                              ])
+                            ? addAnotherPer()
                             : Container(),
                         SizedBox(
                           height: 30,
@@ -728,26 +669,9 @@ class _ContinuesAddState extends State<ContinuesAdd> {
                                           _petSelectedList
                                               .add(_personailty.text);
                                         }
-                                        // anotherPersonailty.map(
-                                        //   (chip) =>
-                                        //       print(chip.label.toString()),
-                                        // );
-                                        //petPersonailty = anotherPersonailty;
-                                        setState(() {
-                                          anotherPersonailty.forEach((labl2) =>
-                                              petPersonailty.removeWhere(
-                                                  (chip) =>
-                                                      chip.label.toString() ==
-                                                      labl2));
-                                          petPersonailty2.forEach((element) {
-                                            petPersonailty.add(element);
-                                          });
-                                        });
 
                                         print(anotherPersonailty.length);
                                         print(_petSelectedList);
-
-                                        // print("another: $anotherPersonailty");
                                       }
                                     } else {
                                       _showErrorDialog(
