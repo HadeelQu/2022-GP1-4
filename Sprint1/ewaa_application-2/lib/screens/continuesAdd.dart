@@ -180,7 +180,18 @@ class _ContinuesAddState extends State<ContinuesAdd> {
     }
 
     if (type == "قط") {
+      // petPersonailty = CatPersonailty.Personailty.where((element) =>
+      //     element.breeds.toString() == breed ||
+      //     element.breeds.toString() == "All").toList();
+      ////
       petPersonailty = CatPersonailty.Personailty;
+      petPersonailty.removeWhere((chip) => chip.breeds.toString() != breed);
+      petPersonailty.add(ChipData(
+        label: "اخرى",
+        isSelected: false,
+        backgrondColor: Style.purpole,
+        breeds: "",
+      ));
     } else {
       petPersonailty = DogPersonailty.Personailty;
     }
@@ -629,7 +640,12 @@ class _ContinuesAddState extends State<ContinuesAdd> {
                                               breeds: "",
                                             );
 
-                                            petPersonailty.add(newPer);
+                                            petPersonailty.add(ChipData(
+                                              label: _personailty.text,
+                                              isSelected: false,
+                                              backgrondColor: Style.purpole,
+                                              breeds: breed,
+                                            ));
 
                                             // anotherPersonailty.add(ChipData(
                                             //   label: _personailty.text,
@@ -641,8 +657,10 @@ class _ContinuesAddState extends State<ContinuesAdd> {
                                                 .add(_personailty.text);
                                             _personailty.clear();
                                             //print(newPer.label);
+
                                             anotherPersonailty
                                                 .add(newPer.label);
+                                            print(petPersonailty);
                                           });
                                         }
                                       },
