@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ewaa_application/screens/editPetInfo.dart';
 import 'package:ewaa_application/screens/home.dart';
+import 'package:ewaa_application/screens/login.dart';
 import 'package:ewaa_application/screens/profile.dart';
 import 'package:ewaa_application/screens/register.dart';
 import 'package:ewaa_application/widgets/button.dart';
@@ -48,13 +49,28 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
   late var reasonsOfAdoption;
   late var supplies;
   late var personalites = [];
+  late var personalites2 = [];
+  var numberOfUserLike;
+
   late var image;
   bool _isloading = false;
+  var listOfLiked = [];
+  var isNotLike;
   void initState() {
     super.initState();
     getData();
 
     petPersonailty = ["مرح", "لطيف", "ودود مع الاطفال", "هادئ"];
+  }
+
+  getLikedUser() {
+    return FirebaseFirestore.instance
+        .collection("pets")
+        .doc(widget.petId)
+        .snapshots();
+    // .where("petId", isEqualTo: widget.petId)
+    // .where("likedUsers", arrayContains: _auth.currentUser?.uid)
+    // .snapshots();
   }
 
   void getData() async {
@@ -86,7 +102,11 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
         petName = petInfo.get("petName");
         petGender = petInfo.get("gender");
         petCategory = petInfo.get("category");
-        personalites = petInfo.get("personalites");
+        personalites2 = petInfo.get("personalites");
+
+        personalites2.forEach((p) {
+          if (p != "") personalites.add(p);
+        });
         petAge = petInfo.get('age');
         petBreed = petInfo.get("breed");
         Timestamp uplodedAt = petInfo.get("addedAt");
@@ -102,6 +122,13 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
         reasonsOfAdoption = petInfo.get("reasonsOfAdoption");
         supplies = petInfo.get("supplies");
         image = petInfo.get("image");
+        listOfLiked = petInfo.get("likedUsers");
+        numberOfUserLike = listOfLiked.length;
+        if (listOfLiked.contains(_auth.currentUser?.uid)) {
+          isNotLike = false;
+        } else {
+          isNotLike = true;
+        }
         _isloading = true;
       });
     } catch (error) {
@@ -176,6 +203,43 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
         ],
       ),
     );
+  }
+
+  void Like(bool isLiked) {
+    var userID = [_auth.currentUser?.uid];
+    print(isLiked);
+    if (isLiked) {
+      FirebaseFirestore.instance
+          .collection("pets")
+          .doc(widget.petId)
+          .update({"likedUsers": FieldValue.arrayUnion(userID)});
+      FirebaseFirestore.instance
+          .collection("Users")
+          .doc(_auth.currentUser?.uid)
+          .update({
+        "likedPets": FieldValue.arrayUnion([widget.petId])
+      });
+
+      setState(() {
+        isNotLike = false;
+        numberOfUserLike += 1;
+      });
+    } else {
+      FirebaseFirestore.instance
+          .collection("pets")
+          .doc(widget.petId)
+          .update({"likedUsers": FieldValue.arrayRemove(userID)});
+      FirebaseFirestore.instance
+          .collection("Users")
+          .doc(_auth.currentUser?.uid)
+          .update({
+        "likedPets": FieldValue.arrayRemove([widget.petId])
+      });
+      setState(() {
+        isNotLike = true;
+        numberOfUserLike -= 1;
+      });
+    }
   }
 
   @override
@@ -313,10 +377,45 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
                               SizedBox(
                                 width: 15,
                               ),
-                              Icon(
-                                Icons.favorite_border,
-                                color: Style.buttonColor_pink,
-                                size: 30,
+                              Row(
+                                children: [
+                                  Text(numberOfUserLike.toString()),
+                                  !isNotLike && _auth.currentUser != null
+                                      ? IconButton(
+                                          icon: Icon(
+                                            Icons.favorite,
+                                            color: Style.buttonColor_pink,
+                                            size: 30,
+                                          ),
+                                          onPressed: () {
+                                            Like(false);
+                                          },
+                                        )
+                                      : isNotLike && _auth.currentUser != null
+                                          ? IconButton(
+                                              icon: Icon(
+                                                Icons.favorite_border,
+                                                color: Style.buttonColor_pink,
+                                                size: 30,
+                                              ),
+                                              onPressed: () {
+                                                print(_auth.currentUser);
+                                                Like(true);
+                                              },
+                                            )
+                                          : IconButton(
+                                              icon: Icon(
+                                                Icons.favorite_border,
+                                                color: Style.buttonColor_pink,
+                                                size: 30,
+                                              ),
+                                              onPressed: () {
+                                                print("does not login");
+                                                Navigator.pushReplacementNamed(
+                                                    context, Login.screenRoute);
+                                              },
+                                            ),
+                                ],
                               ),
                               SizedBox(
                                 width: 15,
@@ -650,7 +749,6 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
             } else if (1 == value) {
               //   Navigator.pushReplacementNamed(context, .screenRoute);
             } else if (2 == value) {
-              //Navigator.pushReplacementNamed(context, .screenRoute);
             } else if (3 == value) {
               // Navigator.pushReplacementNamed(context, .screenRoute);
             }

@@ -151,6 +151,7 @@ class _ContinuesAddState extends State<ContinuesAdd> {
             "supplies": _supplies.text,
             "personalites": _petSelectedList,
             "image": url,
+            "likedUsers": []
           });
           numberOfAdd = 1;
 
@@ -219,6 +220,8 @@ class _ContinuesAddState extends State<ContinuesAdd> {
         }, 1, 15),
       );
     }
+
+    if (_petSelectedList.isEmpty) _petSelectedList.add("");
 
     return SafeArea(
       child: Scaffold(
@@ -657,7 +660,9 @@ class _ContinuesAddState extends State<ContinuesAdd> {
                                             "قم بتعبئة حميع المعلومات الصحية");
                                       }
 
-                                      if (_petSelectedList.isEmpty) {
+                                      if (_petSelectedList.isEmpty ||
+                                          (_petSelectedList.length == 1 &&
+                                              _petSelectedList.contains(""))) {
                                         isComplete = false;
                                         _showErrorDialog(
                                             "قم  بتعبئة معلومات شخصية الحيوان الاليف");

@@ -87,7 +87,7 @@ class _EditPetInfo extends State<EditPetInfo> {
           petName = petInfo.get("petName");
           petGender = petInfo.get("gender");
           petCategory = petInfo.get("category");
-          petAge = petInfo.get('age');
+          petAge = petInfo.get("age");
           petBreed = petInfo.get("breed");
           petColor = petInfo.get("color");
           PetImage = petInfo.get("image");
@@ -253,8 +253,8 @@ class _EditPetInfo extends State<EditPetInfo> {
       {"id": 5, "breed": "اخرى", "parentId": 2},
     ];
     this.petAges = [
-      {"id": 1, "age": "طفل"},
-      {"id": 2, "age": "بالغ"},
+      {"id": 1, "age": "صغير"}, //نتاكد
+      {"id": 2, "age": "بالغ "},
       {"id": 3, "age": "كبير"},
     ];
     this.petColors = [

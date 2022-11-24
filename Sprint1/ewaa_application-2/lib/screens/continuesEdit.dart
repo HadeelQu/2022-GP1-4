@@ -43,6 +43,7 @@ class _ContinuesEdit extends State<ContinuesEdit> {
   TextEditingController _healthProfileCont = TextEditingController();
   TextEditingController _reasonsOfAdoption = TextEditingController();
   TextEditingController _supplies = TextEditingController();
+  TextEditingController _personailty = TextEditingController();
 
   GlobalKey<FormState> formState = new GlobalKey<FormState>();
 
@@ -60,6 +61,12 @@ class _ContinuesEdit extends State<ContinuesEdit> {
 
   var _petSelectedList = [];
 
+  var anotherPersonailty = [];
+  var petPersonailty = [];
+  var petPersonailty2 = [];
+
+  //bool selected = false;
+
   bool _isloading = false;
   bool _isloading2 = false;
 
@@ -73,6 +80,8 @@ class _ContinuesEdit extends State<ContinuesEdit> {
   late var reasonsOfAdoption;
   late var supplies;
   late var petSelectedList;
+
+  late var ActupetBreed;
 
   final _auth = FirebaseAuth.instance;
   late User siginUser;
@@ -88,13 +97,14 @@ class _ContinuesEdit extends State<ContinuesEdit> {
             .get();
 
         setState(() {
+          ActupetBreed = petInfo.get("breed");
+
           incolustion = petInfo.get("incolustion");
           neutering = petInfo.get("Neutering");
           healthPassport = petInfo.get("healthPassport");
           healthProfile = petInfo.get("healthProfile");
           healthProfileCont = petInfo.get("nameOfHospital");
           _healthProfileCont.text = healthProfileCont;
-
           reasonsOfAdoption = petInfo.get("reasonsOfAdoption");
           _reasonsOfAdoption.text = reasonsOfAdoption;
 
@@ -102,7 +112,15 @@ class _ContinuesEdit extends State<ContinuesEdit> {
           _supplies.text = supplies;
 
           petSelectedList = petInfo.get("personalites");
-          _petSelectedList = petSelectedList;
+          if (ActupetBreed == widget.breed) {
+            _petSelectedList = petSelectedList;
+            if (petSelectedList[0] != "") _petSelectedList.add("اخرى");
+          } else {
+            _petSelectedList = [];
+            _petSelectedList.add("");
+          }
+
+          _personailty.text = petSelectedList[0];
 
           selectedIncolustion = incolustion;
           selectedNeutering = neutering;
@@ -286,6 +304,48 @@ class _ContinuesEdit extends State<ContinuesEdit> {
           _isloading2 = false;
         });
       }
+    }
+
+    @override
+    void initState() {
+      // TODO: implement initState
+      super.initState();
+      anotherPersonailty = [];
+    }
+
+    if (widget.type == "قط") {
+      if (widget.breed == "اخرى") {
+        petPersonailty = CatPersonailty.Personailty.getRange(0, 9).toList();
+      } else {
+        petPersonailty = CatPersonailty.Personailty.where((element) =>
+                element.breeds == widget.breed || element.breeds == "الكل")
+            .toList();
+      }
+    } else {
+      if (widget.breed == "اخرى") {
+        petPersonailty = DogPersonailty.Personailty.getRange(0, 9).toList();
+      } else {
+        petPersonailty = DogPersonailty.Personailty.where((element) =>
+                element.breeds == widget.breed || element.breeds == "الكل")
+            .toList();
+      }
+    }
+    addAnotherPer() {
+      return Container(
+        margin: EdgeInsets.symmetric(horizontal: 25),
+        child: FileldsAdd("الشخصية", _personailty, TextInputType.text, (value) {
+          if (value.isEmpty) {
+            return "الرجاء اكمال بيانات الشخصيه";
+          }
+          if (!RegExp(r'^[\u0600-\u065F\u066A-\u06EF\u06FA-\u06FFa-zA-Z-_ ]+$')
+              .hasMatch(value)) {
+            return "الرجاء ادخال اسم فقط يحتوي علي حروف";
+          }
+          // print(value);
+
+          return null;
+        }, 1, 15),
+      );
     }
 
     return SafeArea(
@@ -698,9 +758,8 @@ class _ContinuesEdit extends State<ContinuesEdit> {
                                 verticalDirection: VerticalDirection.down,
                                 runSpacing: 8,
                                 direction: Axis.horizontal,
-                                children: widget.type == "قط"
-                                    ? CatPersonailty.Personailty.map((chip) =>
-                                        FilterChip(
+                                children: petPersonailty
+                                    .map((chip) => FilterChip(
                                           pressElevation: 17,
                                           selected: _petSelectedList
                                               .contains(chip.label),
@@ -721,30 +780,14 @@ class _ContinuesEdit extends State<ContinuesEdit> {
                                           label: Text(chip.label.toString()),
                                           backgroundColor:
                                               Style.textFieldsColor_lightpink,
-                                        )).toList()
-                                    : DogPersonailty.Personailty.map((chip) =>
-                                        FilterChip(
-                                          pressElevation: 17,
-                                          selected: _petSelectedList
-                                              .contains(chip.label),
-                                          onSelected: (value) {
-                                            setState(() {
-                                              if (value) {
-                                                _petSelectedList
-                                                    .add(chip.label);
-                                              } else {
-                                                _petSelectedList.removeWhere(
-                                                    (label) =>
-                                                        label == chip.label);
-                                              }
-                                            });
-                                          },
-                                          selectedColor: Style.buttonColor_pink,
-                                          labelPadding: EdgeInsets.all(4),
-                                          label: Text(chip.label.toString()),
-                                          backgroundColor:
-                                              Style.textFieldsColor_lightpink,
-                                        )).toList()),
+                                        ))
+                                    .toList()),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            _petSelectedList.contains("اخرى")
+                                ? addAnotherPer()
+                                : Container(),
                             SizedBox(
                               height: 30,
                             ),
@@ -769,21 +812,35 @@ class _ContinuesEdit extends State<ContinuesEdit> {
                                       color: Style.buttonColor_pink,
                                       title: "تحديث",
                                       onPeressed: () {
-                                        bool isComplete = true;
-                                        if (formState.currentState!
-                                            .validate()) {
-                                          if (_petSelectedList.isEmpty) {
-                                            isComplete = false;
+                                        try {
+                                          bool isComplete = true;
+                                          if (formState.currentState!
+                                              .validate()) {
+                                            if (_petSelectedList.length == 1) {
+                                              isComplete = false;
+                                              _showErrorDialog(
+                                                  "قم  بتعبئة معلومات شخصية الحيوان الاليف");
+                                            }
+                                            if (isComplete) {
+                                              if (_petSelectedList
+                                                  .contains("اخرى"))
+                                                _petSelectedList[0] =
+                                                    _personailty.text;
+                                              else {
+                                                _petSelectedList[0] = "";
+                                                // _petSelectedList.remove("اخرى");
+                                              }
+
+                                              _petSelectedList.remove("اخرى");
+
+                                              print(_petSelectedList);
+                                              update();
+                                            }
+                                          } else {
                                             _showErrorDialog(
-                                                "قم  بتعبئة معلومات شخصية الحيوان الاليف");
+                                                "قم بتعبئة جميع الخانات الاجباريه ");
                                           }
-                                          if (isComplete) {
-                                            update();
-                                          }
-                                        } else {
-                                          _showErrorDialog(
-                                              "قم بتعبئة جميع الخانات الاجباريه ");
-                                        }
+                                        } catch (e) {}
                                       },
                                       minwidth: 500,
                                       circular: 0,
