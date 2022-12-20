@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ewaa_application/screens/home.dart';
 import 'package:ewaa_application/screens/login.dart';
 import 'package:ewaa_application/style.dart';
+import 'package:ewaa_application/widgets/infoDialog.dart';
 import '../widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -81,20 +82,34 @@ class _RegisterState extends State<Register> {
         _isloading = true;
       });
       print("vaild");
-      await _auth.createUserWithEmailAndPassword(
-          email: _email, password: _passward);
-      final user = FirebaseAuth.instance.currentUser;
-      final userId = user!.uid;
+      await _auth
+          .createUserWithEmailAndPassword(email: _email, password: _passward)
+          .then((value) {
+        final user = FirebaseAuth.instance.currentUser;
+        final userId = user!.uid;
 
-      FirebaseFirestore.instance.collection("Users").doc(userId).set({
-        "id": userId,
-        "userNamae": _username,
-        "email": _email,
-        "phoneNumber": _phoneNumber,
-        "userImage": "",
-        // image
+        FirebaseFirestore.instance.collection("Users").doc(userId).set({
+          "id": userId,
+          "userNamae": _username,
+          "email": _email,
+          "phoneNumber": _phoneNumber,
+          "userImage": "",
+          // image
+        }).then((value) {
+          _auth.currentUser?.sendEmailVerification().then((value) {
+            showDialog(
+                context: context,
+                builder: (context) => ShowInfoDialog(
+                    "تم إرسال رابط الى بريدك الالكتروني لتفعيل الحساب"));
+            _auth.signOut();
+            setState(() {
+              _isloading = false;
+            });
+          });
+        });
       });
-      Navigator.pushReplacementNamed(context, HomePage.screenRoute);
+      ;
+      //Navigator.pushReplacementNamed(context, HomePage.screenRoute);
     } catch (error) {
       setState(() {
         _isloading = false;
@@ -110,10 +125,6 @@ class _RegisterState extends State<Register> {
       _showErrorDialog(errorAfterTranslate);
       print(error.toString()[0]);
     }
-
-    setState(() {
-      _isloading = false;
-    });
   }
 
   submit() {

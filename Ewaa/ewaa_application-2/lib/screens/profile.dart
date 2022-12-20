@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ewaa_application/screens/addP.dart';
+import 'package:ewaa_application/screens/edit_profile.dart';
 import 'package:ewaa_application/screens/home.dart';
 import 'package:ewaa_application/screens/my_pets_screen.dart';
+import 'package:ewaa_application/widgets/custom_app_bar.dart';
 import 'package:ewaa_application/widgets/listView.dart';
 import 'package:ewaa_application/widgets/pet_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -248,44 +250,7 @@ class _ProfilePage extends State<ProfilePage> {
 
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0.0,
-            iconTheme: IconThemeData(color: Style.black, size: 28),
-            toolbarHeight: 75,
-            title: Row(
-              children: [
-                SizedBox(
-                  width: 83,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      "images/logo.png",
-                      height: 35,
-                    ),
-                    SizedBox(
-                      width: 8,
-                    ),
-                    Text(
-                      "إيواء",
-                      style: Theme.of(context).textTheme.headline1,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            actions: [
-              IconButton(
-                  icon: Icon(
-                    Icons.arrow_forward_sharp,
-                    size: 30,
-                  ),
-                  onPressed: () {
-                    Navigator.popAndPushNamed(context, HomePage.screenRoute);
-                  }),
-            ]),
+        appBar: getProfilePageAppBar(context),
         drawer: listView(),
         body: !_isloading
             ? Center(
@@ -408,7 +373,10 @@ class _ProfilePage extends State<ProfilePage> {
                                 child: MyButton2(
                                     color: Style.buttonColor_pink,
                                     title: "تعديل الملف الشخصي",
-                                    onPeressed: () {}),
+                                    onPeressed: () {
+                                      Navigator.pushReplacementNamed(
+                                          context, EditProfilePage.screenRoute);
+                                    }),
                               ),
                             );
                           }),
