@@ -1,5 +1,7 @@
 import 'package:ewaa_application/screens/addP.dart';
 import 'package:ewaa_application/screens/continuesAdd.dart';
+import 'package:ewaa_application/screens/edit_profile.dart';
+import 'package:ewaa_application/screens/favouritesPage.dart';
 import 'package:ewaa_application/screens/forget_passward.dart';
 import 'package:ewaa_application/screens/home.dart';
 import 'package:ewaa_application/screens/listPets.dart';
@@ -7,6 +9,7 @@ import 'package:ewaa_application/screens/login.dart';
 
 import 'package:ewaa_application/screens/profile.dart';
 import 'package:ewaa_application/screens/register.dart';
+import 'package:ewaa_application/screens/search.dart';
 import 'package:ewaa_application/style.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -86,6 +89,9 @@ class MyApp extends StatelessWidget {
         AddPets.screenRoute: (context) => AddPets(),
         ForgfetPassward.screenRoute: (context) => ForgfetPassward(),
         MyPetsPage.screenRoute: (context) => MyPetsPage(),
+        SearchPage.screenRoute: (context) => SearchPage(),
+        FavouritesPage.screenRoute: (context) => FavouritesPage(),
+        EditProfilePage.screenRoute: (context) => EditProfilePage()
       },
     );
   }

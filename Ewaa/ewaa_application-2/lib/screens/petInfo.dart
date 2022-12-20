@@ -8,8 +8,11 @@ import 'package:ewaa_application/widgets/button.dart';
 import 'package:ewaa_application/widgets/listView.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../style.dart';
+
+//import 'myFavorite.dart';
 
 class PetInfo extends StatefulWidget {
   //static const String screenRoute = "petInfo_page";
@@ -369,11 +372,28 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
                           ),
                           Row(
                             children: [
-                              Icon(
-                                Icons.share_outlined,
-                                color: Style.buttonColor_pink,
-                                size: 30,
-                              ),
+                              IconButton(
+                                  onPressed: () async {
+                                    var petInfo = "الاسم:" + petName + "\n";
+                                    petInfo =
+                                        petInfo + "النوع:" + petCategory + "\n";
+                                    petInfo =
+                                        petInfo + "الفصيلة:" + petBreed + "\n";
+                                    petInfo =
+                                        petInfo + "الجنس:" + petGender + "\n";
+                                    petInfo =
+                                        petInfo + "اللون:" + petColor + "\n";
+                                    petInfo =
+                                        petInfo + "العمر:" + petAge + "\n";
+                                    petInfo =
+                                        petInfo + "الصورة:" + "\n" + image;
+                                    await Share.share(petInfo);
+                                  },
+                                  icon: Icon(
+                                    Icons.share_outlined,
+                                    color: Style.buttonColor_pink,
+                                    size: 30,
+                                  )),
                               SizedBox(
                                 width: 15,
                               ),
@@ -635,33 +655,44 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
                                     height: 20,
                                   ),
                                   buildSectionTitle(context, "الشخصية"),
-                                  Wrap(
-                                    spacing: 8,
-                                    crossAxisAlignment:
-                                        WrapCrossAlignment.center,
-                                    verticalDirection: VerticalDirection.down,
-                                    runSpacing: 8,
-                                    direction: Axis.horizontal,
-                                    children: personalites
-                                        .map((petPer) => Container(
-                                              padding: EdgeInsets.all(10),
-                                              decoration: BoxDecoration(
-                                                  color: Style
-                                                      .textFieldsColor_lightpink,
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                  border: Border.all(
-                                                      color: Style
-                                                          .textFieldsColor_lightpink)),
-                                              child: Text(
-                                                petPer,
-                                                style: TextStyle(
-                                                    fontFamily: 'ElMessiri',
-                                                    color: Style.purpole),
-                                              ),
-                                            ))
-                                        .toList(),
-                                  )
+                                  personalites.isEmpty
+                                      ? Text(
+                                          "لم يتم ذكر الشخصيات",
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              fontFamily: 'ElMessiri',
+                                              color: Style.purpole),
+                                        )
+                                      : Wrap(
+                                          spacing: 8,
+                                          crossAxisAlignment:
+                                              WrapCrossAlignment.center,
+                                          verticalDirection:
+                                              VerticalDirection.down,
+                                          runSpacing: 8,
+                                          direction: Axis.horizontal,
+                                          children: personalites
+                                              .map((petPer) => Container(
+                                                    padding: EdgeInsets.all(10),
+                                                    decoration: BoxDecoration(
+                                                        color: Style
+                                                            .textFieldsColor_lightpink,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                        border: Border.all(
+                                                            color: Style
+                                                                .textFieldsColor_lightpink)),
+                                                    child: Text(
+                                                      petPer,
+                                                      style: TextStyle(
+                                                          fontFamily:
+                                                              'ElMessiri',
+                                                          color: Style.purpole),
+                                                    ),
+                                                  ))
+                                              .toList(),
+                                        )
                                 ],
                               ),
                             ),
@@ -715,44 +746,6 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
                         circular: 0,
                       ),
                     ]),
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Color.fromARGB(238, 252, 249, 249),
-          currentIndex: 0,
-          showUnselectedLabels: true,
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: Color.fromARGB(189, 116, 115, 115),
-          unselectedItemColor: Color.fromARGB(189, 116, 115, 115),
-          unselectedLabelStyle: TextStyle(fontFamily: "ElMessiri"),
-          selectedLabelStyle: TextStyle(fontFamily: "ElMessiri"),
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: "الرئيسية",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.search),
-              label: "البحث",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.favorite),
-              label: "المفضلة",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.notifications_active),
-              label: "الإشعارات",
-            ),
-          ],
-          onTap: (value) {
-            if (0 == value) {
-              Navigator.pushReplacementNamed(context, HomePage.screenRoute);
-            } else if (1 == value) {
-              //   Navigator.pushReplacementNamed(context, .screenRoute);
-            } else if (2 == value) {
-            } else if (3 == value) {
-              // Navigator.pushReplacementNamed(context, .screenRoute);
-            }
-          },
         ),
       ),
     );
