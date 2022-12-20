@@ -3,6 +3,9 @@ import 'package:ewaa_application/screens/listPets.dart';
 import 'package:ewaa_application/screens/login.dart';
 
 import 'package:ewaa_application/screens/petInfo.dart';
+import 'package:ewaa_application/screens/search.dart';
+import 'package:ewaa_application/widgets/bottom_nav.dart';
+import 'package:ewaa_application/widgets/custom_app_bar.dart';
 import 'package:ewaa_application/widgets/listView.dart';
 import 'package:flutter/material.dart';
 import 'package:ewaa_application/screens/profile.dart';
@@ -71,49 +74,7 @@ class _HomePageState extends State<HomePage> {
 
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0.0,
-          iconTheme: IconThemeData(color: Style.black, size: 28),
-          toolbarHeight: 75,
-          title: Row(
-            children: [
-              IconButton(
-                padding: EdgeInsets.only(left: 20),
-                icon: Icon(
-                  Icons.person_sharp,
-                  size: 30,
-                ),
-                onPressed: () {
-                  if (_auth.currentUser == null) {
-                    Navigator.pushNamed(context, Register.screenRoute);
-                  } else {
-                    Navigator.pushNamed(context, ProfilePage.screenRoute);
-                  }
-                },
-              ),
-              SizedBox(
-                width: 35,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    "images/logo.png",
-                    height: 35,
-                  ),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  Text(
-                    "إيواء",
-                    style: Theme.of(context).textTheme.headline1,
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+        appBar: getCustomAppBar(context),
         drawer: listView(),
         body: Column(children: [
           Expanded(
@@ -168,36 +129,42 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(
                   height: 10,
                 ),
-                Container(
-                  margin: EdgeInsets.only(bottom: 26, left: 26, right: 26),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Style.textFieldsColor_lightpink,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(right: 15),
-                        child: Text(
-                          "هل تبحث عن حيوان معين ؟ استخدمني",
-                          style: TextStyle(
-                            color: Style.purpole.withOpacity(0.8),
-                            fontFamily: 'ElMessiri',
-                            fontSize: 15,
+                InkWell(
+                  onTap: () => {
+                    Navigator.pushReplacementNamed(
+                        context, SearchPage.screenRoute)
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: 26, left: 26, right: 26),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Style.textFieldsColor_lightpink,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(right: 15),
+                          child: Text(
+                            "هل تبحث عن حيوان معين ؟ استخدمني",
+                            style: TextStyle(
+                              color: Style.purpole.withOpacity(0.8),
+                              fontFamily: 'ElMessiri',
+                              fontSize: 15,
+                            ),
                           ),
                         ),
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          Icons.filter_alt_sharp,
-                          size: 30,
-                          color: Colors.black.withOpacity(0.6),
+                        IconButton(
+                          icon: Icon(
+                            Icons.filter_alt_sharp,
+                            size: 30,
+                            color: Colors.black.withOpacity(0.6),
+                          ),
+                          onPressed: () {},
                         ),
-                        onPressed: () {},
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 Container(
@@ -492,44 +459,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ]),
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Color.fromARGB(238, 252, 249, 249),
-          currentIndex: 0,
-          showUnselectedLabels: true,
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: Style.buttonColor_pink,
-          unselectedItemColor: Color.fromARGB(189, 116, 115, 115),
-          unselectedLabelStyle: TextStyle(fontFamily: "ElMessiri"),
-          selectedLabelStyle: TextStyle(fontFamily: "ElMessiri"),
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: "الرئيسية",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.search),
-              label: "البحث",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.favorite),
-              label: "المفضلة",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.notifications_active),
-              label: "الإشعارات",
-            ),
-          ],
-          onTap: (value) {
-            if (0 == value) {
-              Navigator.pushReplacementNamed(context, HomePage.screenRoute);
-            } else if (1 == value) {
-              // Navigator.pushReplacementNamed(context, .screenRoute);
-            } else if (2 == value) {
-            } else if (3 == value) {
-              // Navigator.pushReplacementNamed(context, .screenRoute);
-            }
-          },
-        ),
+        bottomNavigationBar: BottomNav(selectedPage: HomePage.screenRoute),
       ),
     );
   }

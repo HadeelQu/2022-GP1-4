@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ewaa_application/screens/home.dart';
 import 'package:ewaa_application/screens/petInfo.dart';
+import 'package:ewaa_application/screens/search.dart';
+import 'package:ewaa_application/widgets/bottom_nav.dart';
 import 'package:ewaa_application/widgets/listView.dart';
 import 'package:flutter/material.dart';
 import 'package:ewaa_application/screens/profile.dart';
@@ -133,29 +135,35 @@ class _ListPetsPage extends State<ListPetsPage> {
                 borderRadius: BorderRadius.circular(10),
                 color: Style.textFieldsColor_lightpink,
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(right: 15),
-                    child: Text(
-                      "هل تبحث عن حيوان معين ؟ استخدمني",
-                      style: TextStyle(
-                        color: Style.purpole.withOpacity(0.8),
-                        fontFamily: 'ElMessiri',
-                        fontSize: 15,
+              child: InkWell(
+                onTap: () {
+                  Navigator.pushReplacementNamed(
+                      context, SearchPage.screenRoute);
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(right: 15),
+                      child: Text(
+                        "هل تبحث عن حيوان معين ؟ استخدمني",
+                        style: TextStyle(
+                          color: Style.purpole.withOpacity(0.8),
+                          fontFamily: 'ElMessiri',
+                          fontSize: 15,
+                        ),
                       ),
                     ),
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.filter_alt_sharp,
-                      size: 30,
-                      color: Colors.black.withOpacity(0.6),
+                    IconButton(
+                      icon: Icon(
+                        Icons.filter_alt_sharp,
+                        size: 30,
+                        color: Colors.black.withOpacity(0.6),
+                      ),
+                      onPressed: () {},
                     ),
-                    onPressed: () {},
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             Container(
@@ -359,45 +367,7 @@ class _ListPetsPage extends State<ListPetsPage> {
             ),
           ],
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Color.fromARGB(238, 252, 249, 249),
-          currentIndex: 0,
-          showUnselectedLabels: true,
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: Color.fromARGB(189, 116, 115, 115),
-          unselectedItemColor: Color.fromARGB(189, 116, 115, 115),
-          unselectedLabelStyle: TextStyle(fontFamily: "ElMessiri"),
-          selectedLabelStyle: TextStyle(fontFamily: "ElMessiri"),
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: "الرئيسية",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.search),
-              label: "البحث",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.favorite),
-              label: "المفضلة",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.notifications_active),
-              label: "الإشعارات",
-            ),
-          ],
-          onTap: (value) {
-            if (0 == value) {
-              Navigator.pushReplacementNamed(context, HomePage.screenRoute);
-            } else if (1 == value) {
-              //  Navigator.pushReplacementNamed(context, .screenRoute);
-            } else if (2 == value) {
-              //Navigator.pushReplacementNamed(context, .screenRoute);
-            } else if (3 == value) {
-              // Navigator.pushReplacementNamed(context, .screenRoute);
-            }
-          },
-        ),
+        bottomNavigationBar: BottomNav(),
       ),
     );
   }

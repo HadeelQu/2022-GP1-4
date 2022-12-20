@@ -65,6 +65,8 @@ class _ContinuesEdit extends State<ContinuesEdit> {
   var petPersonailty = [];
   var petPersonailty2 = [];
 
+  var GenralpetPersonailty = [];
+
   //bool selected = false;
 
   bool _isloading = false;
@@ -213,6 +215,15 @@ class _ContinuesEdit extends State<ContinuesEdit> {
   @override
   @override
   Widget build(BuildContext context) {
+    GenralpetPersonailty = [];
+    for (var i = 0; i < petPersonailty.length; i++) {
+      print(petPersonailty[i].label);
+      GenralpetPersonailty.add(petPersonailty[i].label);
+    }
+    GenralpetPersonailty.remove("اخرى");
+
+    print(GenralpetPersonailty);
+
     update() async {
       try {
         if (_auth != null) {
@@ -249,6 +260,7 @@ class _ContinuesEdit extends State<ContinuesEdit> {
               "reasonsOfAdoption": _reasonsOfAdoption.text,
               "supplies": _supplies.text,
               "personalites": _petSelectedList,
+              "genralPersonailty": GenralpetPersonailty,
             });
           } else {
             final imagePet = FirebaseStorage.instance
@@ -284,6 +296,7 @@ class _ContinuesEdit extends State<ContinuesEdit> {
               "supplies": _supplies.text,
               "personalites": _petSelectedList,
               "image": url,
+              "genralPersonailty": GenralpetPersonailty,
             });
           }
 
@@ -813,29 +826,39 @@ class _ContinuesEdit extends State<ContinuesEdit> {
                                       title: "تحديث",
                                       onPeressed: () {
                                         try {
-                                          bool isComplete = true;
+                                          bool isComplete = false;
                                           if (formState.currentState!
                                               .validate()) {
-                                            if (_petSelectedList.length == 1) {
-                                              isComplete = false;
-                                              _showErrorDialog(
-                                                  "قم  بتعبئة معلومات شخصية الحيوان الاليف");
+                                            if (_petSelectedList
+                                                .contains("اخرى"))
+                                              _petSelectedList[0] =
+                                                  _personailty.text;
+                                            else {
+                                              _petSelectedList[0] = "";
+                                              // _petSelectedList.remove("اخرى");
                                             }
-                                            if (isComplete) {
-                                              if (_petSelectedList
-                                                  .contains("اخرى"))
-                                                _petSelectedList[0] =
-                                                    _personailty.text;
-                                              else {
-                                                _petSelectedList[0] = "";
-                                                // _petSelectedList.remove("اخرى");
-                                              }
+                                            _petSelectedList.remove("اخرى");
 
-                                              _petSelectedList.remove("اخرى");
+                                            update();
 
-                                              print(_petSelectedList);
-                                              update();
-                                            }
+                                            // if (_petSelectedList.length != 1) {
+                                            //   isComplete = true;
+                                            // }
+                                            // if (isComplete) {
+                                            //   if (_petSelectedList
+                                            //       .contains("اخرى"))
+                                            //     _petSelectedList[0] =
+                                            //         _personailty.text;
+                                            //   else {
+                                            //     _petSelectedList[0] = "";
+                                            //     // _petSelectedList.remove("اخرى");
+                                            //   }
+
+                                            //   _petSelectedList.remove("اخرى");
+
+                                            //   print(_petSelectedList);
+                                            //   update();
+                                            // }
                                           } else {
                                             _showErrorDialog(
                                                 "قم بتعبئة جميع الخانات الاجباريه ");

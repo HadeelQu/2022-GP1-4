@@ -1,6 +1,8 @@
 import 'package:ewaa_application/screens/forget_passward.dart';
 import 'package:ewaa_application/screens/home.dart';
 import 'package:ewaa_application/screens/register.dart';
+import 'package:ewaa_application/widgets/authDialog.dart';
+import 'package:ewaa_application/widgets/infoDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:email_validator/email_validator.dart';
@@ -36,6 +38,12 @@ class _LoginState extends State<Login> {
     _repeatePassward.dispose();
 
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
   }
 
   @override
@@ -90,16 +98,38 @@ class _LoginState extends State<Login> {
         });
         try {
           print("vaild");
-          await _auth.signInWithEmailAndPassword(
-              email: _email.text.trim(), password: _passward.text.trim());
-          Navigator.pushNamed(context, HomePage.screenRoute);
+          await _auth
+              .signInWithEmailAndPassword(
+                  email: _email.text.trim(), password: _passward.text.trim())
+              .then((value) {
+            if (value.user?.emailVerified == false) {
+              showDialog(
+                  context: context,
+                  builder: (context) => ShowAuthDialog(
+                      "الحساب غير مفعل..يرجى مراجعة بريدك لتفعيل الحساب"));
+            } else {
+              Navigator.pushNamedAndRemoveUntil(
+                  context, HomePage.screenRoute, (route) => route.isFirst);
+            }
+          }).catchError((err) {
+            print("yyyy" + err.toString());
+            var firstIndexOfErrorMss = err.toString().indexOf('[');
+            var lastIndexOfErrorMss = err.toString().indexOf(']');
+            print("ddddddd" + err.toString());
+            var errorCode = err
+                .toString()
+                .substring(firstIndexOfErrorMss, lastIndexOfErrorMss + 1);
+            print(errorCode);
+            var errorAfterTranslate = translateErrorMassage(errorCode);
+            _showErrorDialog(errorAfterTranslate);
+          });
         } catch (error) {
           setState(() {
             _isloading = false;
           });
           var firstIndexOfErrorMss = error.toString().indexOf('[');
           var lastIndexOfErrorMss = error.toString().indexOf(']');
-
+          print("ddddddd" + error.toString());
           var errorCode = error
               .toString()
               .substring(firstIndexOfErrorMss, lastIndexOfErrorMss + 1);

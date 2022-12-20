@@ -49,6 +49,7 @@ class _ContinuesAddState extends State<ContinuesAdd> {
   String? url;
   int numberOfAdd = 0;
   bool _isloading = false;
+  var GenralpetPersonailty = [];
 
   void _showErrorDialog(error) {
     showDialog(
@@ -111,6 +112,14 @@ class _ContinuesAddState extends State<ContinuesAdd> {
     var numberOfSelected = 0;
 
     add() async {
+      // if (petPersonailty.length == 1) {
+      //   petPersonailty.forEach((element) {
+      //     if (element.label != "اخرى") GenralpetPersonailty.add(element.label);
+      //   });
+      // } else {
+      //   GenralpetPersonailty = [];
+      // }
+
       try {
         if (_auth != null && numberOfAdd < 1) {
           siginUser = _auth.currentUser!;
@@ -151,7 +160,8 @@ class _ContinuesAddState extends State<ContinuesAdd> {
             "supplies": _supplies.text,
             "personalites": _petSelectedList,
             "image": url,
-            "likedUsers": []
+            "likedUsers": [],
+            "genralPersonailty": GenralpetPersonailty,
           });
           numberOfAdd = 1;
 
@@ -197,6 +207,23 @@ class _ContinuesAddState extends State<ContinuesAdd> {
             element.breeds == breed || element.breeds == "الكل").toList();
       }
     }
+
+    // setState(() {
+    //   petPersonailty
+    //       .forEach((element) => GenralpetPersonailty.add(element.label));
+
+    //   //petPersonailty.map((chip) => GenralpetPersonailty.add(chip.label));
+    //   print(GenralpetPersonailty);
+    // });
+
+    GenralpetPersonailty = [];
+    for (var i = 0; i < petPersonailty.length; i++) {
+      print(petPersonailty[i].label);
+      GenralpetPersonailty.add(petPersonailty[i].label);
+    }
+    GenralpetPersonailty.remove("اخرى");
+
+    print(GenralpetPersonailty);
 
     addAnotherPer() {
       return Container(
@@ -649,6 +676,7 @@ class _ContinuesAddState extends State<ContinuesAdd> {
                                   color: Style.buttonColor_pink,
                                   title: "اضافة",
                                   onPeressed: () {
+                                    print(GenralpetPersonailty);
                                     bool isComplete = true;
                                     if (formState.currentState!.validate()) {
                                       if (_healthProfile == null ||
@@ -660,13 +688,13 @@ class _ContinuesAddState extends State<ContinuesAdd> {
                                             "قم بتعبئة حميع المعلومات الصحية");
                                       }
 
-                                      if (_petSelectedList.isEmpty ||
-                                          (_petSelectedList.length == 1 &&
-                                              _petSelectedList.contains(""))) {
-                                        isComplete = false;
-                                        _showErrorDialog(
-                                            "قم  بتعبئة معلومات شخصية الحيوان الاليف");
-                                      }
+                                      // if (_petSelectedList.isEmpty ||
+                                      //     (_petSelectedList.length == 1 &&
+                                      //         _petSelectedList.contains(""))) {
+                                      //   isComplete = false;
+                                      //   _showErrorDialog(
+                                      //       "قم  بتعبئة معلومات شخصية الحيوان الاليف");
+                                      // }
                                       if (isComplete) {
                                         add();
                                         _petSelectedList.remove("اخرى");
