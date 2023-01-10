@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ewaa_application/screens/adoption_form.dart';
+import 'package:ewaa_application/screens/adoption_request_info.dart';
 import 'package:ewaa_application/screens/editPetInfo.dart';
 import 'package:ewaa_application/screens/home.dart';
 import 'package:ewaa_application/screens/login.dart';
@@ -8,7 +10,9 @@ import 'package:ewaa_application/widgets/button.dart';
 import 'package:ewaa_application/widgets/listView.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:uuid/uuid.dart';
 
 import '../style.dart';
 
@@ -53,7 +57,10 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
   late var supplies;
   late var personalites = [];
   late var personalites2 = [];
+  var adoptionState = false;
+  var adoption_request_id;
   var numberOfUserLike;
+  late var userData;
 
   late var image;
   bool _isloading = false;
@@ -62,6 +69,7 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     getData();
+    checkIfAdopter();
 
     petPersonailty = ["مرح", "لطيف", "ودود مع الاطفال", "هادئ"];
   }
@@ -74,6 +82,92 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
     // .where("petId", isEqualTo: widget.petId)
     // .where("likedUsers", arrayContains: _auth.currentUser?.uid)
     // .snapshots();
+  }
+
+  checkIfAdopter() {
+    if (_auth.currentUser == null) {
+      setState(() {
+        adoptionState = false;
+      });
+      return;
+    }
+
+    FirebaseFirestore.instance
+        .collection("adoption_requests")
+        .where("adopter_id", isEqualTo: _auth.currentUser!.uid)
+        .where("pet_id", isEqualTo: widget.petId)
+        .get()
+        .then((value) {
+      if (value.size == 0)
+        setState(() {
+          adoptionState = false;
+        });
+      else {
+        DocumentSnapshot doc = value.docs.first;
+        setState(() {
+          adoption_request_id = doc.id;
+          adoptionState = true;
+        });
+      }
+    });
+  }
+
+  void send() async {
+    FirebaseFirestore.instance
+        .collection("Users")
+        .doc(_auth.currentUser!.uid)
+        .get()
+        .then((value) {
+      setState(() {
+        userData = value.data();
+      });
+
+      if (userData["adoption_info"] != null) {
+        var request_info = userData["adoption_info"];
+        setState(() {
+          _isloading = false;
+        });
+        final request_id = Uuid().v4();
+        request_info["request_id"] = request_id;
+        request_info["petName"] = petName;
+        request_info["owner_id"] = widget.owner;
+        request_info["pet_id"] = widget.petId;
+        request_info["request_date"] = FieldValue.serverTimestamp();
+        request_info["pet_name"] = petName;
+        request_info["pet_image"] = image;
+        request_info["status"] = "قيد المعالجة";
+        FirebaseFirestore.instance
+            .collection("adoption_requests")
+            .doc(request_id)
+            .set(request_info)
+            .then((value) {
+          setState(() {
+            _isloading = true;
+          });
+          checkIfAdopter();
+          Fluttertoast.showToast(
+              msg: "تم إرسال الطلب بنجاح",
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 2,
+              backgroundColor: Style.textFieldsColor_lightpink,
+              textColor: Style.purpole,
+              fontSize: 16.0);
+        }).catchError((error) {
+          print(error.toString());
+          setState(() {
+            _isloading = true;
+          });
+        });
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AdoptionForm(),
+          ),
+        );
+      }
+    });
   }
 
   void getData() async {
@@ -91,6 +185,15 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
             IssameUser = false;
           });
         }
+        FirebaseFirestore.instance
+            .collection("Users")
+            .doc(_user.uid)
+            .get()
+            .then((value) {
+          setState(() {
+            userData = value.data();
+          });
+        });
       } else {
         setState(() {
           IssameUser = false;
@@ -136,7 +239,7 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
       });
     } catch (error) {
       setState(() {
-        _isloading = false;
+        _isloading = true;
       });
     }
   }
@@ -243,6 +346,10 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
         numberOfUserLike -= 1;
       });
     }
+    FirebaseFirestore.instance
+        .collection("pets")
+        .doc(widget.petId)
+        .update({"likes_count": numberOfUserLike});
   }
 
   @override
@@ -725,10 +832,22 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
                       ),
                       MyButton(
                         color: Style.buttonColor_pink,
-                        title:
-                            IssameUser ? "تعديل المعلومات" : "ارسال طلب التبني",
+                        title: IssameUser
+                            ? "تعديل المعلومات"
+                            : adoptionState
+                                ? "عرض معلومات الطلب"
+                                : "ارسال طلب التبني",
                         onPeressed: () {
                           try {
+                            if (_auth.currentUser == null) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Login(),
+                                ),
+                              );
+                              return;
+                            }
                             if (IssameUser) {
                               Navigator.push(
                                 context,
@@ -739,6 +858,17 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
                                   ),
                                 ),
                               );
+                            } else if (adoptionState) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AdoptionRequestInfo(
+                                    request_id: adoption_request_id,
+                                  ),
+                                ),
+                              );
+                            } else {
+                              send();
                             }
                           } catch (e) {}
                         },

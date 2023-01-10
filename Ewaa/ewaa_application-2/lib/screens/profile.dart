@@ -2,9 +2,12 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ewaa_application/screens/addP.dart';
+import 'package:ewaa_application/screens/adoption_form.dart';
 import 'package:ewaa_application/screens/edit_profile.dart';
 import 'package:ewaa_application/screens/home.dart';
 import 'package:ewaa_application/screens/my_pets_screen.dart';
+import 'package:ewaa_application/screens/my_requests.dart';
+import 'package:ewaa_application/screens/requests_log.dart';
 import 'package:ewaa_application/widgets/custom_app_bar.dart';
 import 'package:ewaa_application/widgets/listView.dart';
 import 'package:ewaa_application/widgets/pet_widget.dart';
@@ -513,17 +516,29 @@ class _ProfilePage extends State<ProfilePage> {
                           Navigator.pushNamed(context, AddPets.screenRoute);
                         },
                       ),
+                      MyTextButton(
+                        text: "المعلومات اللازمة للتبني",
+                        icon: Icons.info_outline,
+                        onPressed: () {
+                          Navigator.pushNamed(
+                              context, AdoptionForm.screenRoute);
+                        },
+                      ),
 
                       MyTextButton(
                         text: "طلبات التبني",
                         icon: Icons.list,
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, MyRequests.screenRoute);
+                        },
                       ),
 
                       MyTextButton(
                         text: "العمليات السابقة",
                         icon: Icons.history,
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, RequestsLog.screenRoute);
+                        },
                       ),
 
                       Divider(

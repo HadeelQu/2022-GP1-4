@@ -91,3 +91,59 @@ AppBar getProfilePageAppBar(BuildContext context) {
             }),
       ]);
 }
+
+AppBar getBasicAppBar(BuildContext context) {
+  var _auth = FirebaseAuth.instance;
+  return AppBar(
+      backgroundColor: Colors.transparent, //transparent
+      elevation: 0.0,
+      iconTheme: IconThemeData(color: Style.black, size: 28),
+      toolbarHeight: 75,
+      title: Row(
+        children: [
+          IconButton(
+            padding: EdgeInsets.only(left: 20),
+            icon: Icon(
+              Icons.person_sharp,
+              size: 30,
+            ),
+            onPressed: () {
+              if (_auth.currentUser == null) {
+                Navigator.pushNamed(context, Register.screenRoute);
+              } else {
+                Navigator.pushNamed(context, ProfilePage.screenRoute);
+              }
+            },
+          ),
+          SizedBox(
+            width: 35,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                "images/logo.png",
+                height: 35,
+              ),
+              SizedBox(
+                width: 8,
+              ),
+              Text(
+                "إيواء",
+                style: Theme.of(context).textTheme.headline1,
+              ),
+            ],
+          ),
+        ],
+      ),
+      actions: [
+        IconButton(
+            icon: const Icon(
+              Icons.arrow_forward_sharp,
+              size: 30,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
+      ]);
+}

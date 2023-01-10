@@ -6,6 +6,7 @@ import 'package:ewaa_application/screens/forget_passward.dart';
 import 'package:ewaa_application/screens/home.dart';
 import 'package:ewaa_application/screens/listPets.dart';
 import 'package:ewaa_application/screens/login.dart';
+import 'package:ewaa_application/screens/my_requests.dart';
 
 import 'package:ewaa_application/screens/profile.dart';
 import 'package:ewaa_application/screens/register.dart';
@@ -14,7 +15,9 @@ import 'package:ewaa_application/style.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'screens/adoption_form.dart';
 import 'screens/my_pets_screen.dart';
+import 'screens/requests_log.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -91,7 +94,10 @@ class MyApp extends StatelessWidget {
         MyPetsPage.screenRoute: (context) => MyPetsPage(),
         SearchPage.screenRoute: (context) => SearchPage(),
         FavouritesPage.screenRoute: (context) => FavouritesPage(),
-        EditProfilePage.screenRoute: (context) => EditProfilePage()
+        EditProfilePage.screenRoute: (context) => EditProfilePage(),
+        MyRequests.screenRoute: (context) => MyRequests(),
+        RequestsLog.screenRoute: (context) => RequestsLog(),
+        AdoptionForm.screenRoute: (context) => AdoptionForm(),
       },
     );
   }

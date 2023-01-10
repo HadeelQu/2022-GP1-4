@@ -1,4 +1,9 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
+import 'package:ewaa_application/catPersonailty.dart';
+import 'package:ewaa_application/dogPersonailty.dart';
 import 'package:ewaa_application/screens/listPets.dart';
 import 'package:ewaa_application/screens/login.dart';
 
@@ -29,6 +34,86 @@ class _HomePageState extends State<HomePage> {
   var petname;
   bool loading = false;
 
+  var pets_snapshot = FirebaseFirestore.instance
+      .collection("pets")
+      .orderBy("likes_count", descending: true)
+      .limit(10)
+      .snapshots();
+
+  prepareData() async {
+    final _user = _auth.currentUser;
+    var data = {};
+    if (_user != null) {
+      FirebaseFirestore.instance
+          .collection("Users")
+          .doc(_user.uid)
+          .get()
+          .then((doc) {
+        var userData = doc.data();
+        var likedPets = userData!["likedPets"];
+        data["liked_id"] = likedPets;
+
+        FirebaseFirestore.instance.collection("pets").get().then((pets) async {
+          var petsData = {};
+          for (var pet in pets.docs) {
+            petsData[pet.get("petId")] = pet.get("genralPersonailty");
+          }
+          data["personality"] = petsData;
+          var dbasics_personality = [];
+
+          DogPersonailty.Personailty.forEach((element) {
+            dbasics_personality.add(element.label);
+          });
+
+          var cbasics_personality = [];
+
+          CatPersonailty.Personailty.forEach((element) {
+            cbasics_personality.add(element.label);
+          });
+
+          var all_personalities = [];
+          all_personalities.addAll(cbasics_personality);
+          all_personalities.addAll(dbasics_personality);
+          var distinct_list = all_personalities.toSet().toList();
+
+          data["basics_personality"] = distinct_list;
+
+          var dio = Dio();
+          await dio
+              .post(
+            'http://10.0.2.2:5000/Recommender',
+            data: data,
+          )
+              .then((value) {
+            // var r=jsonDecode(response.data);
+            print("response:" + value.data.toString());
+            var similarities = value.data;
+            var featured_pets = similarities['similarity_pets'];
+
+            setState(() {
+              pets_snapshot = FirebaseFirestore.instance
+                  .collection("pets")
+                  .where("petId", whereIn: featured_pets)
+                  .limit(10)
+                  .snapshots();
+            });
+          }).catchError((e) {
+            print("errorrrrr:" + e.toString());
+            setState(() {
+              pets_snapshot = FirebaseFirestore.instance
+                  .collection("pets")
+                  .orderBy("likes_count", descending: true)
+                  .limit(10)
+                  .snapshots();
+            });
+          });
+
+          // print(data.toString());
+        });
+      });
+    }
+  }
+
   //  controller: sc,
 
   getUser() async {
@@ -56,6 +141,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     sc = new ScrollController();
     getUser();
+    prepareData();
 
     super.initState();
   }
@@ -64,13 +150,13 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
-    getPetslimit() {
-      return FirebaseFirestore.instance
-          .collection("pets")
-          .orderBy("addedAt", descending: true)
-          .limit(5)
-          .snapshots();
-    }
+    // getPetslimit() {
+    //   return FirebaseFirestore.instance
+    //       .collection("pets")
+    //       .orderBy("likes_count", descending: true)
+    //       .limit(10)
+    //       .snapshots();
+    // }
 
     return SafeArea(
       child: Scaffold(
@@ -161,7 +247,10 @@ class _HomePageState extends State<HomePage> {
                             size: 30,
                             color: Colors.black.withOpacity(0.6),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(
+                                context, SearchPage.screenRoute);
+                          },
                         ),
                       ],
                     ),
@@ -280,7 +369,7 @@ class _HomePageState extends State<HomePage> {
                   width: 350,
                   height: 27,
                   child: Text(
-                    "حيوانات متوفرة",
+                    "الحيوانات المقترحة",
                     style: TextStyle(
                       color: Style.purpole.withOpacity(0.8),
                       fontFamily: 'ElMessiri',
@@ -289,7 +378,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 StreamBuilder<QuerySnapshot>(
-                  stream: getPetslimit(),
+                  stream: pets_snapshot,
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (snapshot.hasError) {

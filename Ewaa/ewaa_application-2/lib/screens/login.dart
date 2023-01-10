@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ewaa_application/screens/adoption_form.dart';
 import 'package:ewaa_application/screens/forget_passward.dart';
 import 'package:ewaa_application/screens/home.dart';
 import 'package:ewaa_application/screens/register.dart';
@@ -108,20 +110,29 @@ class _LoginState extends State<Login> {
                   builder: (context) => ShowAuthDialog(
                       "الحساب غير مفعل..يرجى مراجعة بريدك لتفعيل الحساب"));
             } else {
-              Navigator.pushNamedAndRemoveUntil(
-                  context, HomePage.screenRoute, (route) => route.isFirst);
+              FirebaseFirestore.instance
+                  .collection("Users")
+                  .doc(value.user!.uid)
+                  .get()
+                  .then((info) {
+                var data = info.data();
+                if (data!['adoption_info'] == null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AdoptionForm(
+                        after_login: true,
+                      ),
+                    ),
+                  );
+                } else {
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, HomePage.screenRoute, (route) => route.isFirst);
+                }
+              });
             }
           }).catchError((err) {
             print("yyyy" + err.toString());
-            var firstIndexOfErrorMss = err.toString().indexOf('[');
-            var lastIndexOfErrorMss = err.toString().indexOf(']');
-            print("ddddddd" + err.toString());
-            var errorCode = err
-                .toString()
-                .substring(firstIndexOfErrorMss, lastIndexOfErrorMss + 1);
-            print(errorCode);
-            var errorAfterTranslate = translateErrorMassage(errorCode);
-            _showErrorDialog(errorAfterTranslate);
           });
         } catch (error) {
           setState(() {
