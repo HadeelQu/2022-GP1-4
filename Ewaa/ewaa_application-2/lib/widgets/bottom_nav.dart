@@ -1,6 +1,8 @@
 import 'package:ewaa_application/screens/favouritesPage.dart';
 import 'package:ewaa_application/screens/home.dart';
 import 'package:ewaa_application/screens/login.dart';
+import 'package:ewaa_application/screens/my_requests.dart';
+import 'package:ewaa_application/screens/requests_log.dart';
 import 'package:ewaa_application/screens/search.dart';
 import 'package:ewaa_application/style.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,7 +19,7 @@ class BottomNav extends StatelessWidget {
 
     int getSelectedIndex() {
       if (selectedPage == HomePage.screenRoute) return 0;
-      if (selectedPage == SearchPage.screenRoute) return 1;
+      if (selectedPage == MyRequests.screenRoute) return 1;
       if (selectedPage == FavouritesPage.screenRoute) return 2;
       return 0;
     }
@@ -38,8 +40,8 @@ class BottomNav extends StatelessWidget {
           label: "الرئيسية",
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.search),
-          label: "البحث",
+          icon: Icon(Icons.handshake),
+          label: "طلبات التبني",
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.favorite),
@@ -54,7 +56,10 @@ class BottomNav extends StatelessWidget {
         if (0 == value) {
           Navigator.pushReplacementNamed(context, HomePage.screenRoute);
         } else if (1 == value) {
-          Navigator.pushReplacementNamed(context, SearchPage.screenRoute);
+          if (_auth.currentUser == null)
+            Navigator.pushReplacementNamed(context, Login.screenRoute);
+          else
+            Navigator.pushReplacementNamed(context, MyRequests.screenRoute);
         } else if (2 == value) {
           if (_auth.currentUser == null)
             Navigator.pushReplacementNamed(context, Login.screenRoute);
