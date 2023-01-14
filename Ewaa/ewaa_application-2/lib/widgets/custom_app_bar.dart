@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 AppBar getCustomAppBar(BuildContext context) {
   var _auth = FirebaseAuth.instance;
   return AppBar(
-    backgroundColor: Colors.transparent,
+    backgroundColor: Colors.white,
     elevation: 0.0,
     iconTheme: IconThemeData(color: Style.black, size: 28),
     toolbarHeight: 75,

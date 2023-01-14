@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ewaa_application/screens/addP.dart';
 import 'package:ewaa_application/screens/home.dart';
 import 'package:ewaa_application/screens/login.dart';
+import 'package:ewaa_application/screens/my_requests.dart';
 import 'package:ewaa_application/screens/register.dart';
+import 'package:ewaa_application/screens/requests_log.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ewaa_application/style.dart';
@@ -148,6 +150,7 @@ class _listView extends State<listView> {
                 ),
                 onTap: () {
                   Navigator.pop(context);
+                  Navigator.pushNamed(context, MyRequests.screenRoute);
                 },
               ),
               ListTile(
@@ -165,27 +168,27 @@ class _listView extends State<listView> {
                   ),
                 ),
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.pushNamed(context, RequestsLog.screenRoute);
                 },
               ),
-              ListTile(
-                leading: Icon(
-                  Icons.help,
-                  color: Style.purpole,
-                ),
-                title: const Text(
-                  'المساعدة',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 15,
-                    fontFamily: 'ElMessiri',
-                    fontWeight: FontWeight.w200,
-                  ),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
+              // ListTile(
+              //   leading: Icon(
+              //     Icons.help,
+              //     color: Style.purpole,
+              //   ),
+              //   title: const Text(
+              //     'المساعدة',
+              //     style: TextStyle(
+              //       color: Colors.black,
+              //       fontSize: 15,
+              //       fontFamily: 'ElMessiri',
+              //       fontWeight: FontWeight.w200,
+              //     ),
+              //   ),
+              //   onTap: () {
+              //     Navigator.pop(context);
+              //   },
+              // ),
               ListTile(
                   leading: Icon(
                     Icons.logout,
@@ -249,7 +252,7 @@ class _listView extends State<listView> {
                     color: Style.purpole,
                   ),
                   title: const Text(
-                    'تسجل الدخول',
+                    'تسجيل الدخول',
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 15,
@@ -258,7 +261,7 @@ class _listView extends State<listView> {
                     ),
                   ),
                   onTap: () {
-                    Navigator.pushReplacementNamed(context, Login.screenRoute);
+                    Navigator.pushNamed(context, Login.screenRoute);
                   }),
               ListTile(
                   leading: Icon(
@@ -275,8 +278,7 @@ class _listView extends State<listView> {
                     ),
                   ),
                   onTap: () {
-                    Navigator.pushReplacementNamed(
-                        context, Register.screenRoute);
+                    Navigator.pushNamed(context, Register.screenRoute);
                   }),
               ListTile(
                 leading: Icon(
@@ -293,7 +295,7 @@ class _listView extends State<listView> {
                   ),
                 ),
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, Login.screenRoute);
+                  Navigator.pushNamed(context, Login.screenRoute);
                 },
               ),
             ],

@@ -3,6 +3,7 @@ import 'package:ewaa_application/screens/adoption_request_info.dart';
 import 'package:ewaa_application/screens/profile.dart';
 import 'package:ewaa_application/screens/register.dart';
 import 'package:ewaa_application/style.dart';
+import 'package:ewaa_application/widgets/bottom_nav.dart';
 import 'package:ewaa_application/widgets/button.dart';
 import 'package:ewaa_application/widgets/custom_app_bar.dart';
 import 'package:ewaa_application/widgets/listView.dart';
@@ -87,10 +88,25 @@ class _MyRequestsState extends State<MyRequests> {
           .where("adopter_id", isEqualTo: _auth.currentUser!.uid)
           .orderBy("request_date", descending: true)
           .snapshots();
+    } else if (_selectedType == "الطلبات المستقبلة المقبولة") {
+      return _firestore
+          .collection("adoption_requests")
+          .where("owner_id", isEqualTo: _auth.currentUser!.uid)
+          .where("status", isEqualTo: "مقبول")
+          .orderBy("request_date", descending: true)
+          .snapshots();
+    } else if (_selectedType == "الطلبات المستقبلة قيد المعالجة") {
+      return _firestore
+          .collection("adoption_requests")
+          .where("owner_id", isEqualTo: _auth.currentUser!.uid)
+          .where("status", isEqualTo: "قيد المعالجة")
+          .orderBy("request_date", descending: true)
+          .snapshots();
     } else {
       return _firestore
           .collection("adoption_requests")
           .where("owner_id", isEqualTo: _auth.currentUser!.uid)
+          .where("status", isEqualTo: "مرفوض")
           .orderBy("request_date", descending: true)
           .snapshots();
     }
@@ -319,7 +335,7 @@ class _MyRequestsState extends State<MyRequests> {
     var uplodedAtDate = request_date.toDate();
     var date =
         '${uplodedAtDate.year}-${uplodedAtDate.month}-${uplodedAtDate.day}';
-
+    print(document["request_id"]);
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: Container(
@@ -431,24 +447,36 @@ class _MyRequestsState extends State<MyRequests> {
     var size = MediaQuery.of(context).size;
     return SafeArea(
         child: Scaffold(
-      appBar: getBasicAppBar(context),
+      appBar: getCustomAppBar(context),
       drawer: listView(),
+      bottomNavigationBar: BottomNav(
+        selectedPage: MyRequests.screenRoute,
+      ),
       body: Column(
         children: [
-          Row(
-            children: [
-              SizedBox(
-                width: 10,
-              ),
-              Expanded(child: typeChip("الطلبات المرسلة")),
-              SizedBox(
-                width: 10,
-              ),
-              Expanded(child: typeChip("الطلبات المستقبلة")),
-              SizedBox(
-                width: 10,
-              ),
-            ],
+          Container(
+            height: 40,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                SizedBox(
+                  width: 10,
+                ),
+                typeChip("الطلبات المرسلة"),
+                SizedBox(
+                  width: 10,
+                ),
+                typeChip("الطلبات المستقبلة المقبولة"),
+                SizedBox(
+                  width: 10,
+                ),
+                typeChip("الطلبات المستقبلة قيد المعالجة"),
+                SizedBox(
+                  width: 10,
+                ),
+                typeChip("الطلبات المستقبلة المرفوضة")
+              ],
+            ),
           ),
           SizedBox(
             height: 10,
