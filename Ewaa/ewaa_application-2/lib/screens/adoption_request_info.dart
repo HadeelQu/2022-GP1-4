@@ -105,7 +105,63 @@ class _AdoptionRequestInfoState extends State<AdoptionRequestInfo> {
         .collection("adoption_requests")
         .doc(widget.request_id)
         .update({"status": state}).then((value) {
-      getRequestInfo();
+      if (state == "مرفوض") {
+        getRequestInfo();
+      } else {
+        updateOwner();
+      }
+    });
+  }
+
+  void rejectOtherRequests() {
+    _firestore
+        .collection("adoption_requests")
+        .where("pet_id", isEqualTo: petInfo["petId"])
+        .where("status", isEqualTo: "قيد المعالجة")
+        .get()
+        .then((requests) {
+      WriteBatch batch = _firestore.batch();
+      for (var request in requests.docs) {
+        batch.update(request.reference, {"status": "مرفوض"});
+      }
+      batch.commit();
+    });
+  }
+
+  deletePetFromLiked(petId) async {
+    await FirebaseFirestore.instance
+        .collection("Users")
+        .where("likedPets", arrayContains: petId)
+        .get()
+        .then((users) {
+      for (var user in users.docs) {
+        FirebaseFirestore.instance
+            .collection("Users")
+            .doc(user.id)
+            .update({"likedPets": FieldValue.arrayRemove(petId)});
+      }
+    });
+  }
+
+  void updateOwner() {
+    _firestore.collection("pets").doc(requestInfo.get("pet_id")).update({
+      "isAdopted": true,
+      "old_owner": petInfo["ownerId"],
+      "ownerId": requestInfo["adopter_id"]
+    }).then((value) {
+      rejectOtherRequests();
+
+      ///
+      deletePetFromLiked(requestInfo.get("pet_id"));
+      Navigator.pushReplacementNamed(context, HomePage.screenRoute);
+      Fluttertoast.showToast(
+          msg: "تم قبول الطلب بنجاح ونقل ملكية الحيوان الى المتبني",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 2,
+          backgroundColor: Style.textFieldsColor_lightpink,
+          textColor: Style.purpole,
+          fontSize: 16.0);
     });
   }
 

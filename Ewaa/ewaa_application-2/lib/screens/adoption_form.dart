@@ -10,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:snippet_coder_utils/FormHelper.dart';
 import 'package:uuid/uuid.dart';
 import 'package:ewaa_application/widgets/helper.dart';
 
@@ -36,6 +37,7 @@ class _AdoptionFormState extends State<AdoptionForm> {
   var hasApet;
   var hasAllergy;
   var jobState;
+  List<dynamic> jobList = [];
 
   bool _isloading = false;
 
@@ -92,7 +94,10 @@ class _AdoptionFormState extends State<AdoptionForm> {
           adoption_info = userInfo.get("adoption_info");
           hasApet = adoption_info["has_pet"];
           hasAllergy = adoption_info["has_allergy"];
-          jobState = adoption_info["job_state"];
+          jobState = this
+              .jobList
+              .where((job) => job["role"] == adoption_info["job_state"])
+              .first["id"];
           _ageController.text = adoption_info["adopter_age"];
           _adoptReasonController.text = adoption_info["adoption_reason"];
         }
@@ -181,6 +186,11 @@ class _AdoptionFormState extends State<AdoptionForm> {
     super.initState();
     //getPetInfo();
     getAdoptionInfo();
+    this.jobList = [
+      {"id": 1, "role": "طالب"}, //نتاكد
+      {"id": 2, "role": "موظف "},
+      {"id": 3, "role": 'غير ذلك'},
+    ];
   }
 
   @override
@@ -218,19 +228,10 @@ class _AdoptionFormState extends State<AdoptionForm> {
                         key: formState,
                         child: Column(
                           children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8),
-                              child: Align(
-                                alignment: Alignment.centerRight,
-                                child: Text(
-                                  "هل لديك حيوان أليف؟",
-                                  style: TextStyle(
-                                    color: Style.black,
-                                    fontSize: 19,
-                                  ),
-                                ),
-                              ),
+                            buildSectionTitle(context, "هل لديك حيوان اليف؟",
+                                fontSize: 16),
+                            SizedBox(
+                              height: 15,
                             ),
                             Row(
                               children: [
@@ -249,6 +250,7 @@ class _AdoptionFormState extends State<AdoptionForm> {
                                       groupValue: hasApet,
                                       title: const Text("نعم"),
                                       selected: hasApet == "نعم",
+                                      selectedTileColor: Colors.purple.shade50,
                                       onChanged: (value) {
                                         setState(() {
                                           hasApet = value;
@@ -269,6 +271,7 @@ class _AdoptionFormState extends State<AdoptionForm> {
                                       value: "لا",
                                       groupValue: hasApet,
                                       selected: hasApet == "لا",
+                                      selectedTileColor: Colors.purple.shade50,
                                       title: const Text("لا"),
                                       onChanged: (value) {
                                         setState(() {
@@ -281,19 +284,14 @@ class _AdoptionFormState extends State<AdoptionForm> {
                                 ),
                               ],
                             ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8),
-                              child: Align(
-                                alignment: Alignment.centerRight,
-                                child: Text(
-                                  "هل لديك أو لدى أحد أفراد عائلتك حساسية من الحيوانات الأليفة؟",
-                                  style: TextStyle(
-                                    color: Style.black,
-                                    fontSize: 19,
-                                  ),
-                                ),
-                              ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            buildSectionTitle(context,
+                                "هل لديك أو لدى أحد أفراد عائلتك حساسية من الحيوانات الأليفة؟",
+                                fontSize: 16),
+                            SizedBox(
+                              height: 15,
                             ),
                             Row(
                               children: [
@@ -309,6 +307,7 @@ class _AdoptionFormState extends State<AdoptionForm> {
                                           borderRadius:
                                               BorderRadius.circular(20)),
                                       value: "نعم",
+                                      selectedTileColor: Colors.purple.shade50,
                                       groupValue: hasAllergy,
                                       title: const Text("نعم"),
                                       selected: hasAllergy == "نعم",
@@ -330,6 +329,7 @@ class _AdoptionFormState extends State<AdoptionForm> {
                                           borderRadius:
                                               BorderRadius.circular(20)),
                                       value: "لا",
+                                      selectedTileColor: Colors.purple.shade50,
                                       groupValue: hasAllergy,
                                       title: const Text("لا"),
                                       selected: hasAllergy == "لا",
@@ -344,129 +344,82 @@ class _AdoptionFormState extends State<AdoptionForm> {
                                 ),
                               ],
                             ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8),
-                              child: Align(
-                                alignment: Alignment.centerRight,
-                                child: Text(
-                                  " حالتي الوظيفية",
-                                  style: TextStyle(
-                                    color: Style.black,
-                                    fontSize: 19,
-                                  ),
-                                ),
-                              ),
+                            SizedBox(
+                              height: 15,
                             ),
-                            Row(
-                              children: [
-                                SizedBox(
-                                  width: 25,
-                                ),
-                                Expanded(
-                                  child: RadioListTile(
-                                      activeColor: Style.purpole,
-                                      contentPadding: EdgeInsets.all(0),
-                                      tileColor: Colors.purple.shade50,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20)),
-                                      value: "طالب",
-                                      groupValue: jobState,
-                                      selected: jobState == "طالب",
-                                      title: const Text("طالب"),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          jobState = value;
-                                        });
-                                      }),
-                                ),
-                                SizedBox(
-                                  width: 20,
-                                ),
-                                Expanded(
-                                  child: RadioListTile(
-                                      activeColor: Style.purpole,
-                                      contentPadding: EdgeInsets.all(0),
-                                      tileColor: Colors.purple.shade50,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20)),
-                                      value: "موظف",
-                                      groupValue: jobState,
-                                      selected: jobState == "موظف",
-                                      title: const Text("موظف"),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          jobState = value;
-                                        });
-                                      }),
-                                ),
-                                SizedBox(
-                                  width: 20,
-                                ),
-                                Expanded(
-                                  child: RadioListTile(
-                                      activeColor: Style.purpole,
-                                      contentPadding: EdgeInsets.all(0),
-                                      tileColor: Colors.purple.shade50,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20)),
-                                      value: "غير ذلك",
-                                      selected: jobState == "غير ذلك",
-                                      groupValue: jobState,
-                                      title: const Text("غير ذلك"),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          jobState = value;
-                                        });
-                                      }),
-                                ),
-                                SizedBox(
-                                  width: 20,
-                                ),
-                              ],
+                            buildSectionTitle(context, "حالتك الوظيفية:",
+                                fontSize: 16),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            FormHelper.dropDownWidget(
+                              context,
+                              "الحالة",
+                              this.jobState,
+                              this.jobList,
+                              (id) {
+                                setState(() {
+                                  print(id);
+
+                                  jobState = jobList
+                                      .where((job) =>
+                                          job["id"].toString() == id.toString())
+                                      .first["role"];
+                                });
+                                print(jobState);
+                              },
+                              (value) {
+                                if (value == null) {
+                                  return " قم بالاختيار";
+                                }
+
+                                return null;
+                              },
+                              optionValue: "id",
+                              optionLabel: "role",
+                              borderColor: Style.gray,
+                              borderFocusColor: Style.purpole,
                             ),
                             SizedBox(
-                              height: 20,
+                              height: 15,
                             ),
+                            buildSectionTitle(context, "تاريخ الميلاد",
+                                fontSize: 16),
                             Container(
                               margin: EdgeInsets.symmetric(horizontal: 25),
                               child: Container(
-                                  padding: EdgeInsets.all(15),
-                                  height: MediaQuery.of(context).size.width / 3,
+                                  padding: EdgeInsets.all(0),
+                                  height: 70,
                                   child: Center(
                                       child: TextField(
                                     controller: _ageController,
                                     //editing controller of this TextField
                                     decoration: InputDecoration(
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: Style.purpole),
-                                          borderRadius:
-                                              BorderRadius.circular(25.7),
-                                        ),
-                                        enabledBorder: UnderlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: Colors.red),
-                                          borderRadius:
-                                              BorderRadius.circular(25.7),
-                                        ),
-                                        labelStyle:
-                                            TextStyle(color: Style.purpole),
-                                        filled: true,
-                                        fillColor:
-                                            Style.textFieldsColor_lightpink,
-                                        focusColor: Style.buttonColor_pink,
-                                        icon: Icon(
-                                          Icons.calendar_today,
-                                          color: Style.purpole,
-                                        ),
-                                        //icon of text field
-                                        labelText:
-                                            "أدخل تاريخ ميدلادك" //label text of field
-                                        ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Style.purpole),
+                                        borderRadius:
+                                            BorderRadius.circular(25.7),
+                                      ),
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.transparent),
+                                        borderRadius:
+                                            BorderRadius.circular(25.7),
+                                      ),
+                                      labelStyle:
+                                          TextStyle(color: Style.purpole),
+                                      filled: true,
+                                      fillColor:
+                                          Style.textFieldsColor_lightpink,
+                                      focusColor: Style.buttonColor_pink,
+                                      icon: Icon(
+                                        Icons.calendar_today,
+                                        color: Style.purpole,
+                                      ),
+                                      //icon of text field
+                                      //label text of field
+                                    ),
                                     readOnly: true,
                                     //set it true, so that user will not able to edit text
                                     onTap: () async {
@@ -487,20 +440,21 @@ class _AdoptionFormState extends State<AdoptionForm> {
                                                 ),
                                                 textButtonTheme:
                                                     TextButtonThemeData(
-                                                        style: ButtonStyle(
-                                                  foregroundColor:
-                                                      MaterialStateProperty.all<
-                                                          Color>(
-                                                    Style.purpole,
+                                                  style: ButtonStyle(
+                                                    foregroundColor:
+                                                        MaterialStateProperty
+                                                            .all<Color>(
+                                                      Style.purpole,
+                                                    ), // button text color
                                                   ),
-                                                )),
+                                                ),
                                               ),
                                             );
                                           },
                                           initialDate: DateTime.now(),
                                           firstDate: DateTime(1950),
                                           //DateTime.now() - not to allow to choose before today.
-                                          lastDate: DateTime(2100));
+                                          lastDate: DateTime.now());
                                       if (pickedDate != null) {
                                         print(
                                             pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
@@ -518,22 +472,10 @@ class _AdoptionFormState extends State<AdoptionForm> {
                                   ))),
                             ),
                             SizedBox(
-                              height: 5,
+                              height: 15,
                             ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8),
-                              child: Align(
-                                alignment: Alignment.centerRight,
-                                child: Text(
-                                  "ماسبب رغبتك في التبني",
-                                  style: TextStyle(
-                                    color: Style.black,
-                                    fontSize: 19,
-                                  ),
-                                ),
-                              ),
-                            ),
+                            buildSectionTitle(context, "ماسبب رغبتك في التبني",
+                                fontSize: 16),
                             SizedBox(
                               height: 10,
                             ),

@@ -35,6 +35,18 @@ class _MyPetsPage extends State<MyPetsPage> {
   deleteMyPet(petId) async {
     await FirebaseFirestore.instance.collection("pets").doc(petId).delete();
 
+    await FirebaseFirestore.instance
+        .collection("adoption_requests")
+        .where("pet_id", isEqualTo: petId)
+        .get()
+        .then((pets) {
+      for (DocumentSnapshot doc in pets.docs) {
+        doc.reference.delete();
+      }
+    });
+
+    await deletePetFromLiked(petId);
+
     Fluttertoast.showToast(
         msg: " تم الحذف بنجاح ",
         toastLength: Toast.LENGTH_LONG,
@@ -43,6 +55,21 @@ class _MyPetsPage extends State<MyPetsPage> {
         backgroundColor: Style.textFieldsColor_lightpink,
         textColor: Style.purpole,
         fontSize: 16.0);
+  }
+
+  deletePetFromLiked(petId) async {
+    await FirebaseFirestore.instance
+        .collection("Users")
+        .where("likedPets", arrayContains: petId)
+        .get()
+        .then((users) {
+      for (var user in users.docs) {
+        FirebaseFirestore.instance
+            .collection("Users")
+            .doc(user.id)
+            .update({"likedPets": FieldValue.arrayRemove(petId)});
+      }
+    });
   }
 
   @override

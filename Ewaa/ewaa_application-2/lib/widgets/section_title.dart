@@ -2,7 +2,8 @@
 import 'package:ewaa_application/style.dart';
 import 'package:flutter/material.dart';
 
-Widget buildSectionTitle(BuildContext context, String title) {
+Widget buildSectionTitle(BuildContext context, String title,
+    {double fontSize = 24}) {
   return Container(
     margin: EdgeInsets.only(left: 26, right: 26),
     alignment: Alignment.topRight,
@@ -11,7 +12,7 @@ Widget buildSectionTitle(BuildContext context, String title) {
       style: TextStyle(
         fontWeight: FontWeight.bold,
         color: Style.black,
-        fontSize: 24,
+        fontSize: fontSize,
         fontFamily: 'ElMessiri',
       ),
     ),

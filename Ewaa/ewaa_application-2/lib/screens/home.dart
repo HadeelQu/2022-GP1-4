@@ -36,6 +36,7 @@ class _HomePageState extends State<HomePage> {
 
   var pets_snapshot = FirebaseFirestore.instance
       .collection("pets")
+      .where("isAdopted", isEqualTo: false)
       .orderBy("likes_count", descending: true)
       .limit(10)
       .snapshots();
@@ -44,6 +45,28 @@ class _HomePageState extends State<HomePage> {
     final _user = _auth.currentUser;
     var data = {};
     if (_user != null) {
+      //prepare all personalities list (basic personality list)
+      var dbasics_personality = [];
+
+      DogPersonailty.Personailty.forEach((element) {
+        dbasics_personality.add(element.label);
+      });
+
+      var cbasics_personality = [];
+
+      CatPersonailty.Personailty.forEach((element) {
+        cbasics_personality.add(element.label);
+      });
+
+      var all_personalities = [];
+      all_personalities.addAll(cbasics_personality);
+      all_personalities.addAll(dbasics_personality);
+      var distinct_list = all_personalities.toSet().toList();
+
+      data["basics_personality"] = distinct_list;
+
+      //prepare all pets personalities
+
       FirebaseFirestore.instance
           .collection("Users")
           .doc(_user.uid)
@@ -56,27 +79,20 @@ class _HomePageState extends State<HomePage> {
         FirebaseFirestore.instance.collection("pets").get().then((pets) async {
           var petsData = {};
           for (var pet in pets.docs) {
-            petsData[pet.get("petId")] = pet.get("genralPersonailty");
+            var personalities = pet.get("personalites");
+            //remove empty items
+            personalities.removeWhere((item) => [""].contains(item));
+            //remove any new personality added by user manually
+            //any personality not belong to basic personality list
+            personalities.removeWhere((item) => !distinct_list.contains(item));
+
+            if (personalities.isEmpty) {
+              petsData[pet.get("petId")] = pet.get("genralPersonailty");
+            } else {
+              petsData[pet.get("petId")] = personalities;
+            }
           }
           data["personality"] = petsData;
-          var dbasics_personality = [];
-
-          DogPersonailty.Personailty.forEach((element) {
-            dbasics_personality.add(element.label);
-          });
-
-          var cbasics_personality = [];
-
-          CatPersonailty.Personailty.forEach((element) {
-            cbasics_personality.add(element.label);
-          });
-
-          var all_personalities = [];
-          all_personalities.addAll(cbasics_personality);
-          all_personalities.addAll(dbasics_personality);
-          var distinct_list = all_personalities.toSet().toList();
-
-          data["basics_personality"] = distinct_list;
 
           var dio = Dio();
           await dio
@@ -90,18 +106,31 @@ class _HomePageState extends State<HomePage> {
             var similarities = value.data;
             var featured_pets = similarities['similarity_pets'];
 
-            setState(() {
-              pets_snapshot = FirebaseFirestore.instance
-                  .collection("pets")
-                  .where("petId", whereIn: featured_pets)
-                  .limit(10)
-                  .snapshots();
-            });
+            if (featured_pets == 0) {
+              setState(() {
+                pets_snapshot = FirebaseFirestore.instance
+                    .collection("pets")
+                    .where("isAdopted", isEqualTo: false)
+                    .orderBy("likes_count", descending: true)
+                    .limit(10)
+                    .snapshots();
+              });
+            } else {
+              setState(() {
+                pets_snapshot = FirebaseFirestore.instance
+                    .collection("pets")
+                    .where("petId", whereIn: featured_pets)
+                    .where("isAdopted", isEqualTo: false)
+                    .limit(10)
+                    .snapshots();
+              });
+            }
           }).catchError((e) {
             print("errorrrrr:" + e.toString());
             setState(() {
               pets_snapshot = FirebaseFirestore.instance
                   .collection("pets")
+                  .where("isAdopted", isEqualTo: false)
                   .orderBy("likes_count", descending: true)
                   .limit(10)
                   .snapshots();
