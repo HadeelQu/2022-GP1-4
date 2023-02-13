@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ewaa_application/screens/addP.dart';
 import 'package:ewaa_application/screens/home.dart';
 import 'package:ewaa_application/screens/login.dart';
+import 'package:ewaa_application/screens/my_pets_screen.dart';
 import 'package:ewaa_application/screens/my_requests.dart';
 import 'package:ewaa_application/screens/register.dart';
 import 'package:ewaa_application/screens/requests_log.dart';
@@ -151,6 +152,25 @@ class _listView extends State<listView> {
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.pushNamed(context, MyRequests.screenRoute);
+                },
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.pets,
+                  color: Style.purpole,
+                ),
+                title: const Text(
+                  'حيواناتي',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                    fontFamily: 'ElMessiri',
+                    fontWeight: FontWeight.w200,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, MyPetsPage.screenRoute);
                 },
               ),
               ListTile(

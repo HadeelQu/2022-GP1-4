@@ -138,7 +138,9 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   getPets() {
-    Query query = FirebaseFirestore.instance.collection("pets");
+    Query query = FirebaseFirestore.instance
+        .collection("pets")
+        .where("isAdopted", isEqualTo: false);
 
     if (selectedGender != null) {
       var gender = petGender

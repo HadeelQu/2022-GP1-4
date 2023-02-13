@@ -107,10 +107,34 @@ class _AdoptionRequestInfoState extends State<AdoptionRequestInfo> {
         .update({"status": state}).then((value) {
       if (state == "مرفوض") {
         getRequestInfo();
+        var content = "تم رفض طلب تبني الحيوان " +
+            requestInfo.get("petName") +
+            " الذي أرسلته";
+        var to = [requestInfo.get("adopter_id")];
+        var type = "request_rejected";
+        sendNotification(content, to, type);
       } else {
         updateOwner();
+        var content = "تم قبول طلب تبني الحيوان " +
+            requestInfo.get("petName") +
+            " الذي أرسلته";
+        var to = [requestInfo.get("adopter_id")];
+        var type = "request_accepted";
+        sendNotification(content, to, type);
       }
     });
+  }
+
+  void sendNotification(content, to, type) {
+    //send notification
+    Map<String, dynamic> notification = {};
+    notification["content"] = content;
+    notification["type"] = type;
+    notification["to"] = to;
+    notification["createdAt"] = FieldValue.serverTimestamp();
+    notification["request_id"] = widget.request_id;
+    notification["status"] = "unseen";
+    FirebaseFirestore.instance.collection("notifications").add(notification);
   }
 
   void rejectOtherRequests() {
@@ -121,10 +145,20 @@ class _AdoptionRequestInfoState extends State<AdoptionRequestInfo> {
         .get()
         .then((requests) {
       WriteBatch batch = _firestore.batch();
+      var to = [];
       for (var request in requests.docs) {
         batch.update(request.reference, {"status": "مرفوض"});
+
+        to.add(request.get("adopter_id"));
       }
-      batch.commit();
+      batch.commit().then((value) {
+        //send notification
+        var content = "تم رفض طلب تبني الحيوان " +
+            requestInfo.get("petName") +
+            " الذي أرسلته";
+        var type = "request_rejected";
+        sendNotification(content, to, type);
+      });
     });
   }
 

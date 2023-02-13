@@ -7,6 +7,7 @@ import 'package:ewaa_application/screens/home.dart';
 import 'package:ewaa_application/screens/listPets.dart';
 import 'package:ewaa_application/screens/login.dart';
 import 'package:ewaa_application/screens/my_requests.dart';
+import 'package:ewaa_application/screens/notifications_screen.dart';
 
 import 'package:ewaa_application/screens/profile.dart';
 import 'package:ewaa_application/screens/register.dart';
@@ -98,6 +99,7 @@ class MyApp extends StatelessWidget {
         MyRequests.screenRoute: (context) => MyRequests(),
         RequestsLog.screenRoute: (context) => RequestsLog(),
         AdoptionForm.screenRoute: (context) => AdoptionForm(),
+        NotificationsScreen.screenRoute: (context) => NotificationsScreen(),
       },
     );
   }

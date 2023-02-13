@@ -131,8 +131,6 @@ class _LoginState extends State<Login> {
                 }
               });
             }
-          }).catchError((err) {
-            print("yyyy" + err.toString());
           });
         } catch (error) {
           setState(() {

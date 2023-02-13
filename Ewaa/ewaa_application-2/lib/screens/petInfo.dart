@@ -57,6 +57,7 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
   late var supplies;
   late var personalites = [];
   late var personalites2 = [];
+  late var isAdopted;
   var adoptionState = false;
   var adoption_request_id;
   var numberOfUserLike;
@@ -143,6 +144,20 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
             .then((value) {
           setState(() {
             _isloading = true;
+
+            //send notification
+            Map<String, dynamic> notification = {};
+            notification["content"] =
+                " تم استقبال طلب جديد لتبني الحيوان " + petName;
+            notification["type"] = "request_received";
+            notification["to"] = [request_info["owner_id"]];
+            notification["createdAt"] = FieldValue.serverTimestamp();
+            notification["request_id"] = request_info["request_id"];
+            notification["status"] = "unseen";
+            FirebaseFirestore.instance
+                .collection("notifications")
+                .doc(request_info["request_id"])
+                .set(notification);
           });
           checkIfAdopter();
           Fluttertoast.showToast(
@@ -209,6 +224,7 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
         petGender = petInfo.get("gender");
         petCategory = petInfo.get("category");
         personalites2 = petInfo.get("personalites");
+        isAdopted = petInfo.get("isAdopted");
 
         personalites2.forEach((p) {
           if (p != "") personalites.add(p);
@@ -830,51 +846,54 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
                           ),
                         ]),
                       ),
-                      MyButton(
-                        color: Style.buttonColor_pink,
-                        title: IssameUser
-                            ? "تعديل المعلومات"
-                            : adoptionState
-                                ? "عرض معلومات الطلب"
-                                : "ارسال طلب التبني",
-                        onPeressed: () {
-                          try {
-                            if (_auth.currentUser == null) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Login(),
-                                ),
-                              );
-                              return;
-                            }
-                            if (IssameUser) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => EditPetInfo(
-                                    petId: widget.petId,
-                                    owner: widget.owner,
-                                  ),
-                                ),
-                              );
-                            } else if (adoptionState) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AdoptionRequestInfo(
-                                    request_id: adoption_request_id,
-                                  ),
-                                ),
-                              );
-                            } else {
-                              send();
-                            }
-                          } catch (e) {}
-                        },
-                        minwidth: 350,
-                        circular: 0,
-                      ),
+                      isAdopted
+                          ? SizedBox()
+                          : MyButton(
+                              color: Style.buttonColor_pink,
+                              title: IssameUser
+                                  ? "تعديل المعلومات"
+                                  : adoptionState
+                                      ? "عرض معلومات الطلب"
+                                      : "ارسال طلب التبني",
+                              onPeressed: () {
+                                try {
+                                  if (_auth.currentUser == null) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => Login(),
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                  if (IssameUser) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => EditPetInfo(
+                                          petId: widget.petId,
+                                          owner: widget.owner,
+                                        ),
+                                      ),
+                                    );
+                                  } else if (adoptionState) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            AdoptionRequestInfo(
+                                          request_id: adoption_request_id,
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    send();
+                                  }
+                                } catch (e) {}
+                              },
+                              minwidth: 350,
+                              circular: 0,
+                            ),
                     ]),
         ),
       ),

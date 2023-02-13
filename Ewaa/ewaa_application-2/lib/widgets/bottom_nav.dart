@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ewaa_application/screens/favouritesPage.dart';
 import 'package:ewaa_application/screens/home.dart';
 import 'package:ewaa_application/screens/login.dart';
 import 'package:ewaa_application/screens/my_requests.dart';
+import 'package:ewaa_application/screens/notifications_screen.dart';
 import 'package:ewaa_application/screens/requests_log.dart';
 import 'package:ewaa_application/screens/search.dart';
 import 'package:ewaa_application/style.dart';
@@ -18,10 +20,27 @@ class BottomNav extends StatelessWidget {
     var _auth = FirebaseAuth.instance;
 
     int getSelectedIndex() {
-      if (selectedPage == HomePage.screenRoute) return 0;
-      if (selectedPage == MyRequests.screenRoute) return 1;
-      if (selectedPage == FavouritesPage.screenRoute) return 2;
+      if (selectedPage == HomePage.screenRoute) {
+        return 0;
+      }
+      if (selectedPage == MyRequests.screenRoute) {
+        return 1;
+      }
+      if (selectedPage == FavouritesPage.screenRoute) {
+        return 2;
+      }
+      if (selectedPage == NotificationsScreen.screenRoute) {
+        return 3;
+      }
       return 0;
+    }
+
+    getNewNotifications() {
+      return FirebaseFirestore.instance
+          .collection("notifications")
+          .where("to", arrayContains: _auth.currentUser!.uid)
+          .where("status", isEqualTo: "unseen")
+          .snapshots();
     }
 
     return BottomNavigationBar(
@@ -34,21 +53,53 @@ class BottomNav extends StatelessWidget {
       unselectedItemColor: const Color.fromARGB(189, 116, 115, 115),
       unselectedLabelStyle: const TextStyle(fontFamily: "ElMessiri"),
       selectedLabelStyle: const TextStyle(fontFamily: "ElMessiri"),
-      items: const [
-        BottomNavigationBarItem(
+      items: [
+        const BottomNavigationBarItem(
           icon: Icon(Icons.home),
           label: "الرئيسية",
         ),
-        BottomNavigationBarItem(
+        const BottomNavigationBarItem(
           icon: Icon(Icons.handshake),
           label: "طلبات التبني",
         ),
-        BottomNavigationBarItem(
+        const BottomNavigationBarItem(
           icon: Icon(Icons.favorite),
           label: "المفضلة",
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.notifications_active),
+          icon: _auth.currentUser == null
+              ? const Icon(Icons.notifications)
+              : StreamBuilder<QuerySnapshot>(
+                  stream: getNewNotifications(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      if (snapshot.data!.docs.isEmpty) {
+                        return const Icon(Icons.notifications);
+                      } else {
+                        return Stack(
+                          children: [
+                            const Icon(
+                              Icons.notifications_active,
+                              color: Colors.red,
+                            ),
+                            Positioned.fill(
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  snapshot.data!.docs.length.toString(),
+                                  style: const TextStyle(
+                                      fontSize: 8, color: Colors.white),
+                                ),
+                              ),
+                            )
+                          ],
+                        );
+                      }
+                    } else {
+                      return const Icon(Icons.notifications);
+                    }
+                  },
+                ),
           label: "الإشعارات",
         ),
       ],
@@ -56,17 +107,24 @@ class BottomNav extends StatelessWidget {
         if (0 == value) {
           Navigator.pushReplacementNamed(context, HomePage.screenRoute);
         } else if (1 == value) {
-          if (_auth.currentUser == null)
+          if (_auth.currentUser == null) {
             Navigator.pushReplacementNamed(context, Login.screenRoute);
-          else
+          } else {
             Navigator.pushReplacementNamed(context, MyRequests.screenRoute);
+          }
         } else if (2 == value) {
-          if (_auth.currentUser == null)
+          if (_auth.currentUser == null) {
             Navigator.pushReplacementNamed(context, Login.screenRoute);
-          else
+          } else {
             Navigator.pushReplacementNamed(context, FavouritesPage.screenRoute);
+          }
         } else if (3 == value) {
-          // Navigator.pushReplacementNamed(context, .screenRoute);
+          if (_auth.currentUser == null) {
+            Navigator.pushReplacementNamed(context, Login.screenRoute);
+          } else {
+            Navigator.pushReplacementNamed(
+                context, NotificationsScreen.screenRoute);
+          }
         }
       },
     );

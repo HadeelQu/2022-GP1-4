@@ -53,6 +53,7 @@ class _ProfilePage extends State<ProfilePage> {
         .instance
         .collection("pets")
         .where('ownerId', isEqualTo: siginUser.uid)
+        .where("isAdopted", isEqualTo: false)
         .limit(2)
         .snapshots();
     return pets;

@@ -15,7 +15,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 class MyRequests extends StatefulWidget {
   static const String screenRoute = "my_requests_page";
-  const MyRequests({Key? key}) : super(key: key);
+
+  String initType;
+
+  MyRequests({Key? key, this.initType = "الطلبات المرسلة"}) : super(key: key);
 
   @override
   State<MyRequests> createState() => _MyRequestsState();
@@ -143,20 +146,7 @@ class _MyRequestsState extends State<MyRequests> {
         child: Center(
           child: IconButton(
               onPressed: () {
-                _firestore
-                    .collection("adoption_requests")
-                    .doc(request_id)
-                    .delete()
-                    .then((value) {
-                  Fluttertoast.showToast(
-                      msg: "تم إلغاء طلب التبني بنجاح",
-                      toastLength: Toast.LENGTH_LONG,
-                      gravity: ToastGravity.CENTER,
-                      timeInSecForIosWeb: 2,
-                      backgroundColor: Style.textFieldsColor_lightpink,
-                      textColor: Style.purpole,
-                      fontSize: 16.0);
-                });
+                deleteRequest(request_id);
               },
               icon: Icon(
                 Icons.close,
@@ -213,6 +203,9 @@ class _MyRequestsState extends State<MyRequests> {
         .doc(request_id)
         .delete()
         .then((value) {
+      //cancel notification
+      _firestore.collection("notifications").doc(request_id).delete();
+
       Fluttertoast.showToast(
           msg: "تم إلغاء طلب التبني بنجاح",
           toastLength: Toast.LENGTH_LONG,
@@ -440,6 +433,15 @@ class _MyRequestsState extends State<MyRequests> {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setState(() {
+      _selectedType = widget.initType;
+    });
   }
 
   @override
