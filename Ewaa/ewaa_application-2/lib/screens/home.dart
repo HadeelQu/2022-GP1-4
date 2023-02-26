@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:ewaa_application/screens/profile.dart';
 import 'package:ewaa_application/screens/register.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:http/http.dart' as http;
 
 import '../style.dart';
 
@@ -40,110 +41,58 @@ class _HomePageState extends State<HomePage> {
       .orderBy("likes_count", descending: true)
       .limit(10)
       .snapshots();
+  var pets_collaborative = FirebaseFirestore.instance
+      .collection("pets")
+      .where("isAdopted", isEqualTo: false)
+      .orderBy("likes_count")
+      .limit(10)
+      .snapshots();
 
   prepareData() async {
     final _user = _auth.currentUser;
-    var data = {};
+
     if (_user != null) {
-      //prepare all personalities list (basic personality list)
-      var dbasics_personality = [];
-
-      DogPersonailty.Personailty.forEach((element) {
-        dbasics_personality.add(element.label);
+      final resopnse = await http.post(Uri.parse('http://10.0.2.2:5002/api'),
+          body: json.encode({
+            "name": "hadeel",
+            // "personality": petsData,
+            "userID": _user.uid,
+          }));
+      final recomm = json.decode(resopnse.body) as Map<String, dynamic>;
+      setState(() {
+        pets_snapshot = FirebaseFirestore.instance
+            .collection("pets")
+            .where("petId", whereIn: recomm['similarity_pets'])
+            .where("isAdopted", isEqualTo: false)
+            .limit(10)
+            .snapshots();
+        pets_collaborative = FirebaseFirestore.instance
+            .collection("pets")
+            .where("petId", whereIn: recomm['similarity_users'])
+            .where("isAdopted", isEqualTo: false)
+            .limit(10)
+            .snapshots();
       });
 
-      var cbasics_personality = [];
-
-      CatPersonailty.Personailty.forEach((element) {
-        cbasics_personality.add(element.label);
-      });
-
-      var all_personalities = [];
-      all_personalities.addAll(cbasics_personality);
-      all_personalities.addAll(dbasics_personality);
-      var distinct_list = all_personalities.toSet().toList();
-
-      data["basics_personality"] = distinct_list;
-
-      //prepare all pets personalities
-
-      FirebaseFirestore.instance
-          .collection("Users")
-          .doc(_user.uid)
-          .get()
-          .then((doc) {
-        var userData = doc.data();
-        var likedPets = userData!["likedPets"];
-        data["liked_id"] = likedPets;
-
-        FirebaseFirestore.instance.collection("pets").get().then((pets) async {
-          var petsData = {};
-          for (var pet in pets.docs) {
-            var personalities = pet.get("personalites");
-            //remove empty items
-            personalities.removeWhere((item) => [""].contains(item));
-            //remove any new personality added by user manually
-            //any personality not belong to basic personality list
-            personalities.removeWhere((item) => !distinct_list.contains(item));
-
-            if (personalities.isEmpty) {
-              petsData[pet.get("petId")] = pet.get("genralPersonailty");
-            } else {
-              petsData[pet.get("petId")] = personalities;
-            }
-          }
-          data["personality"] = petsData;
-
-          var dio = Dio();
-          await dio
-              .post(
-            'http://10.0.2.2:5000/Recommender',
-            data: data,
-          )
-              .then((value) {
-            // var r=jsonDecode(response.data);
-            print("response:" + value.data.toString());
-            var similarities = value.data;
-            var featured_pets = similarities['similarity_pets'];
-
-            if (featured_pets == 0) {
-              setState(() {
-                pets_snapshot = FirebaseFirestore.instance
-                    .collection("pets")
-                    .where("isAdopted", isEqualTo: false)
-                    .orderBy("likes_count", descending: true)
-                    .limit(10)
-                    .snapshots();
-              });
-            } else {
-              setState(() {
-                pets_snapshot = FirebaseFirestore.instance
-                    .collection("pets")
-                    .where("petId", whereIn: featured_pets)
-                    .where("isAdopted", isEqualTo: false)
-                    .limit(10)
-                    .snapshots();
-              });
-            }
-          }).catchError((e) {
-            print("errorrrrr:" + e.toString());
-            setState(() {
-              pets_snapshot = FirebaseFirestore.instance
-                  .collection("pets")
-                  .where("isAdopted", isEqualTo: false)
-                  .orderBy("likes_count", descending: true)
-                  .limit(10)
-                  .snapshots();
-            });
-          });
-
-          // print(data.toString());
-        });
+      print(recomm['similarity_pets']);
+      print(recomm['similarity_users']);
+    } else {
+      setState(() {
+        pets_snapshot = FirebaseFirestore.instance
+            .collection("pets")
+            .where("isAdopted", isEqualTo: false)
+            .orderBy("likes_count", descending: true)
+            .limit(10)
+            .snapshots();
+        pets_collaborative = FirebaseFirestore.instance
+            .collection("pets")
+            .where("isAdopted", isEqualTo: false)
+            .orderBy("likes_count", descending: true)
+            .limit(10)
+            .snapshots();
       });
     }
   }
-
-  //  controller: sc,
 
   getUser() async {
     try {
@@ -178,14 +127,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-
-    // getPetslimit() {
-    //   return FirebaseFirestore.instance
-    //       .collection("pets")
-    //       .orderBy("likes_count", descending: true)
-    //       .limit(10)
-    //       .snapshots();
-    // }
 
     return SafeArea(
       child: Scaffold(
@@ -398,7 +339,7 @@ class _HomePageState extends State<HomePage> {
                   width: 350,
                   height: 27,
                   child: Text(
-                    "الحيوانات المقترحة",
+                    "حيوانات تناسب تفضيلاتك",
                     style: TextStyle(
                       color: Style.purpole.withOpacity(0.8),
                       fontFamily: 'ElMessiri',
@@ -408,6 +349,189 @@ class _HomePageState extends State<HomePage> {
                 ),
                 StreamBuilder<QuerySnapshot>(
                   stream: pets_snapshot,
+                  builder: (BuildContext context,
+                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.hasError) {
+                      return const Center(
+                        child: Text("يوجد خطأ"),
+                      );
+                    }
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Container(
+                        height: 200,
+                        width: 100,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                Color.fromARGB(255, 155, 140, 181)),
+                          ),
+                        ),
+                      );
+                    } else if (snapshot.data!.docs.isEmpty) {
+                      return Container(
+                        alignment: Alignment.center,
+                        width: size.width,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Style.textFieldsColor_lightpink,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(right: 15),
+                              child: Text(
+                                "لا توجد حيوانات أليفة متوفرة",
+                                style: TextStyle(
+                                  color: Style.purpole.withOpacity(0.8),
+                                  fontFamily: 'ElMessiri',
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      return SizedBox(
+                        height: 205,
+                        child: Center(
+                          child: ListView(
+                            shrinkWrap: true, // use it
+                            scrollDirection: Axis.horizontal,
+                            children: snapshot.data!.docs.map((doucument) {
+                              if (doucument['petName'] == "") {
+                                petname = doucument['category'];
+                              } else {
+                                petname = doucument['petName'];
+                              }
+                              return Container(
+                                padding:
+                                    const EdgeInsets.only(left: 5, right: 5),
+                                child: Card(
+                                  color: Color.fromARGB(255, 255, 247, 247),
+                                  child: Column(
+                                    children: <Widget>[
+                                      Container(
+                                        width: 170,
+                                        height: 100,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          image: DecorationImage(
+                                              image: NetworkImage(
+                                                doucument['image'],
+                                              ),
+                                              fit: BoxFit.fill),
+                                        ),
+                                      ),
+                                      Text(
+                                        petname,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: Style.black,
+                                          fontFamily: 'ElMessiri',
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                      Container(
+                                        width: 170,
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 12.0),
+                                        child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                doucument['breed'],
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color: Style.black,
+                                                  fontFamily: 'ElMessiri',
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                              Text(
+                                                doucument['gender'],
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color: Style.black,
+                                                  fontFamily: 'ElMessiri',
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                              Text(
+                                                'العمر : ' + doucument['age'],
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color: Style.black,
+                                                  fontFamily: 'ElMessiri',
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ]),
+                                      ),
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                            top: BorderSide(
+                                                color: Colors.black
+                                                    .withOpacity(0.3)),
+                                          ),
+                                        ),
+                                        width: 170,
+                                        child: TextButton(
+                                            child: Text(
+                                              'اكتشف المزيد',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: Style.purpole,
+                                                fontFamily: 'ElMessiri',
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => PetInfo(
+                                                    petId: doucument['petId'],
+                                                    owner: doucument['ownerId'],
+                                                  ),
+                                                ),
+                                              );
+                                            }),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                Container(
+                  margin: EdgeInsets.only(bottom: 26, left: 26, right: 26),
+                  width: 350,
+                  height: 27,
+                  child: Text(
+                    "المستخدمين المشابهين لتفضيلاتك أعجبوا",
+                    style: TextStyle(
+                      color: Style.purpole.withOpacity(0.8),
+                      fontFamily: 'ElMessiri',
+                      fontSize: 17,
+                    ),
+                  ),
+                ),
+                StreamBuilder<QuerySnapshot>(
+                  stream: pets_collaborative,
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (snapshot.hasError) {
