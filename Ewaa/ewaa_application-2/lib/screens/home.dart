@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
     if (_user != null) {
       final resopnse = await http.post(Uri.parse('http://10.0.2.2:5002/api'),
           body: json.encode({
-            "name": "hadeel",
+            // "name": "hadeel",
             // "personality": petsData,
             "userID": _user.uid,
           }));
