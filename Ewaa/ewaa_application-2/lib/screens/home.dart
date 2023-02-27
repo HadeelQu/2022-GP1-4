@@ -54,8 +54,6 @@ class _HomePageState extends State<HomePage> {
     if (_user != null) {
       final resopnse = await http.post(Uri.parse('http://10.0.2.2:5002/api'),
           body: json.encode({
-            // "name": "hadeel",
-            // "personality": petsData,
             "userID": _user.uid,
           }));
       final recomm = json.decode(resopnse.body) as Map<String, dynamic>;
@@ -87,7 +85,7 @@ class _HomePageState extends State<HomePage> {
         pets_collaborative = FirebaseFirestore.instance
             .collection("pets")
             .where("isAdopted", isEqualTo: false)
-            .orderBy("likes_count", descending: true)
+            .orderBy("likes_count")
             .limit(10)
             .snapshots();
       });
