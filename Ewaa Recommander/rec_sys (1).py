@@ -36,6 +36,14 @@ def getSimilarity():
             j = i.to_dict()
             most_like.append(j['petId'])
         print(most_like)
+        least_like = []
+        leastlike = db.collection('pets').where("isAdopted", "==", False).order_by("likes_count", 'ASCENDING').limit(
+            10).get()
+        for i in leastlike:
+            print(i.to_dict())
+            j = i.to_dict()
+            least_like.append(j['petId'])
+        print(least_like)
 
         pets_dict = list(map(lambda x: x.to_dict(), pets))
         df = pd.DataFrame(pets_dict)
@@ -89,7 +97,7 @@ def getSimilarity():
         likeList = df_cd.loc[df_cd['user'] == request_data['userID']]
         print(likeList.empty)
         if (likeList.empty):
-            return {"similarity_pets": most_like, "similarity_users": most_like}
+            return {"similarity_pets": most_like, "similarity_users": least_like}
 
         import numpy as np
 
@@ -183,8 +191,6 @@ def getSimilarity():
         ###### Collabrative #####################
         # We build an n X m matrix consisting of the likes of n users and m pets.
         user_item_coll = pd.crosstab(df2.user, df2.petId)
-        # We then transform the values of the user_item_coll  matrix dataframe into a scipy sparse matrix for more efficient calculations
-        # user_item_coll_matrix = csr_matrix(user_item_coll.values)
 
         # we use cosine similrity to find the similrity between users
         users_similarity_cosine = pd.DataFrame(cosine_similarity(user_item_coll),
@@ -205,7 +211,7 @@ def getSimilarity():
         print(most_similar_user.empty)
         if most_similar_user.empty:
             print(True)
-            return {"similarity_pets": recommandation, "similarity_users": most_like}
+            return {"similarity_pets": recommandation, "similarity_users":  least_like}
 
         # drop the pets that user was liked
         user_item_for_most_sim_users = user_item_coll.drop(
@@ -267,7 +273,7 @@ def getSimilarity():
                 Collaborative_filtering.append(index)
         if (len(Collaborative_filtering) == 0):
             print(f' collbrative recommander is empty? {True}')
-            Collaborative_filtering = most_like
+            Collaborative_filtering = least_like
 
     return {"similarity_pets": recommandation, "similarity_users": Collaborative_filtering}
 
