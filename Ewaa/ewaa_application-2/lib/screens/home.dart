@@ -52,7 +52,9 @@ class _HomePageState extends State<HomePage> {
     final _user = _auth.currentUser;
 
     if (_user != null) {
-      final resopnse = await http.post(Uri.parse('http://10.0.2.2:5002/api'),
+      final resopnse = await http.post(Uri.parse('https://ewaa.herokuapp.com/'),
+          // https://git.heroku.com/ewaa--00.git
+          // https://ewaa--00.herokuapp.com/'
           body: json.encode({
             "userID": _user.uid,
           }));
