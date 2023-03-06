@@ -58,10 +58,6 @@ class _MyRequestsState extends State<MyRequests> {
   }
 
   Widget statusChip(String status) {
-    if (_selectedType == "الطلبات المستقبلة") {
-      return const SizedBox();
-    }
-
     return Container(
       width: 100,
       padding: EdgeInsets.all(4),
@@ -91,25 +87,11 @@ class _MyRequestsState extends State<MyRequests> {
           .where("adopter_id", isEqualTo: _auth.currentUser!.uid)
           .orderBy("request_date", descending: true)
           .snapshots();
-    } else if (_selectedType == "الطلبات المستقبلة المقبولة") {
+    } else if (_selectedType == "الطلبات المستقبلة") {
       return _firestore
           .collection("adoption_requests")
           .where("owner_id", isEqualTo: _auth.currentUser!.uid)
-          .where("status", isEqualTo: "مقبول")
-          .orderBy("request_date", descending: true)
-          .snapshots();
-    } else if (_selectedType == "الطلبات المستقبلة قيد المعالجة") {
-      return _firestore
-          .collection("adoption_requests")
-          .where("owner_id", isEqualTo: _auth.currentUser!.uid)
-          .where("status", isEqualTo: "قيد المعالجة")
-          .orderBy("request_date", descending: true)
-          .snapshots();
-    } else {
-      return _firestore
-          .collection("adoption_requests")
-          .where("owner_id", isEqualTo: _auth.currentUser!.uid)
-          .where("status", isEqualTo: "مرفوض")
+          .orderBy("numerical_status", descending: false)
           .orderBy("request_date", descending: true)
           .snapshots();
     }
@@ -194,6 +176,53 @@ class _MyRequestsState extends State<MyRequests> {
                   )))
         ],
       );
+    }
+  }
+
+  Widget getContactControls2(String status, String owner_id,
+      [String request_id = ""]) {
+    if (_selectedType == "الطلبات المستقبلة" && status == "مقبول") {
+      Map<String, dynamic>? userdoc = Map();
+      _firestore.collection("Users").doc(owner_id).get().then((value) {
+        userdoc = value.data();
+      });
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+              width: button_size,
+              height: button_size,
+              decoration: BoxDecoration(
+                  color: Style.buttonColor_pink,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Style.textFieldsColor_lightpink)),
+              child: IconButton(
+                  onPressed: () {
+                    _makePhoneCall(userdoc!["phoneNumber"]);
+                  },
+                  icon: Icon(
+                    Icons.call,
+                    color: Colors.white,
+                  ))),
+          Container(
+              width: button_size,
+              height: button_size,
+              decoration: BoxDecoration(
+                  color: Style.buttonColor_pink,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Style.textFieldsColor_lightpink)),
+              child: IconButton(
+                  onPressed: () {
+                    _sendEmail(userdoc!["email"]);
+                  },
+                  icon: Icon(
+                    Icons.mail,
+                    color: Colors.white,
+                  )))
+        ],
+      );
+    } else {
+      return const SizedBox();
     }
   }
 
@@ -329,17 +358,16 @@ class _MyRequestsState extends State<MyRequests> {
     var date =
         '${uplodedAtDate.year}-${uplodedAtDate.month}-${uplodedAtDate.day}';
     print(document["request_id"]);
+
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: Container(
-        width: 350,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           color: Style.textFieldsColor_lightpink.withOpacity(0.4),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               width: 150,
@@ -355,80 +383,87 @@ class _MyRequestsState extends State<MyRequests> {
               ),
             ),
             Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Text(
-                      document['pet_name'] == ""
-                          ? "بدون اسم"
-                          : document['pet_name'],
-                      style: TextStyle(
-                        color: Style.black,
-                        fontFamily: 'ElMessiri',
-                        fontSize: 26,
+              child: Container(
+                height: 150,
+                child: Column(
+                  children: [
+                    Align(
+                        alignment: Alignment.topLeft,
+                        child: statusChip(document["status"])),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 5),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            document['pet_name'] == ""
+                                ? "بدون اسم"
+                                : document['pet_name'],
+                            style: TextStyle(
+                              color: Style.black,
+                              fontFamily: 'ElMessiri',
+                              fontSize: 20,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                  Center(
-                    child: Text(
+                    Text(
                       date.toString(),
                       style: TextStyle(
                         color: Style.black,
                         fontFamily: 'ElMessiri',
-                        fontSize: 13,
+                        fontSize: 15,
                       ),
                     ),
-                  ),
-                  Center(
-                    child: Text(
-                      document['adoption_reason'],
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Style.black,
-                        fontFamily: 'ElMessiri',
-                        fontSize: 13,
+                    Center(
+                      child: Text(
+                        document['adoption_reason'],
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Style.black,
+                          fontFamily: 'ElMessiri',
+                          fontSize: 15,
+                        ),
                       ),
                     ),
-                  )
-                ],
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        getContactControls2(document["status"],
+                            document["adopter_id"], document["request_id"]),
+                        Container(
+                          width: button_size,
+                          height: button_size,
+                          decoration: BoxDecoration(
+                              color: Style.purpole,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                  color: Style.textFieldsColor_lightpink)),
+                          child: Center(
+                            child: IconButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => AdoptionRequestInfo(
+                                        request_id: document["request_id"],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(
+                                  Icons.arrow_forward_ios_outlined,
+                                  color: Colors.white,
+                                )),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               ),
-            ),
-            Container(
-              height: 150,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    width: button_size,
-                    height: button_size,
-                    decoration: BoxDecoration(
-                        color: Style.purpole,
-                        borderRadius: BorderRadius.circular(8),
-                        border:
-                            Border.all(color: Style.textFieldsColor_lightpink)),
-                    child: Center(
-                      child: IconButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AdoptionRequestInfo(
-                                  request_id: document["request_id"],
-                                ),
-                              ),
-                            );
-                          },
-                          icon: const Icon(
-                            Icons.arrow_forward_ios_outlined,
-                            color: Colors.white,
-                          )),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            )
           ],
         ),
       ),
@@ -456,8 +491,12 @@ class _MyRequestsState extends State<MyRequests> {
       ),
       body: Column(
         children: [
+          buildSectionTitle(context, "طلبات التبني"),
+          SizedBox(
+            height: 10,
+          ),
           Container(
-            height: 40,
+            height: 50,
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: [
@@ -468,25 +507,14 @@ class _MyRequestsState extends State<MyRequests> {
                 SizedBox(
                   width: 10,
                 ),
-                typeChip("الطلبات المستقبلة المقبولة"),
-                SizedBox(
-                  width: 10,
-                ),
-                typeChip("الطلبات المستقبلة قيد المعالجة"),
-                SizedBox(
-                  width: 10,
-                ),
-                typeChip("الطلبات المستقبلة المرفوضة")
+                typeChip("الطلبات المستقبلة")
               ],
             ),
           ),
           SizedBox(
             height: 10,
           ),
-          buildSectionTitle(context, "طلبات التبني"),
-          SizedBox(
-            height: 10,
-          ),
+          //here
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: getRequestsList(),
@@ -513,7 +541,7 @@ class _MyRequestsState extends State<MyRequests> {
                         Padding(
                           padding: EdgeInsets.only(right: 15),
                           child: Text(
-                            "لاتوجد طلبات",
+                            " لاتوجد طلبات تبني",
                             style: TextStyle(
                               color: Style.purpole.withOpacity(0.8),
                               fontFamily: 'ElMessiri',

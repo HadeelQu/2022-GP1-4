@@ -100,6 +100,13 @@ class _AdoptionRequestInfoState extends State<AdoptionRequestInfo> {
     getRequestInfo();
   }
 
+  void updateNumericalStatus(int numericalStatus) {
+    _firestore
+        .collection("adoption_requests")
+        .doc(widget.request_id)
+        .update({"numerical_status": numericalStatus});
+  } //newly added
+
   void updateRequestStatus(String state) {
     _firestore
         .collection("adoption_requests")
@@ -251,6 +258,7 @@ class _AdoptionRequestInfoState extends State<AdoptionRequestInfo> {
                     title: "قبول",
                     onPeressed: () {
                       updateRequestStatus("مقبول");
+                      updateNumericalStatus(2); //newly added
                     })),
             SizedBox(
               width: 10,
@@ -261,6 +269,7 @@ class _AdoptionRequestInfoState extends State<AdoptionRequestInfo> {
                     title: "رفض",
                     onPeressed: () {
                       updateRequestStatus("مرفوض");
+                      updateNumericalStatus(3); //newly added
                     }))
           ],
         );

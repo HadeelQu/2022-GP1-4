@@ -137,6 +137,7 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
         request_info["pet_name"] = petName;
         request_info["pet_image"] = image;
         request_info["status"] = "قيد المعالجة";
+        request_info["numerical_status"] = 1; //newly added
         FirebaseFirestore.instance
             .collection("adoption_requests")
             .doc(request_id)
@@ -732,7 +733,7 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
                                       infoPet(
                                           "اسم العياده",
                                           nameOfHospital == ""
-                                              ? " ليس لديه جواز صحي"
+                                              ? " ليس لديه ملف صحي"
                                               : nameOfHospital),
                                       SizedBox(
                                         width: 12,
