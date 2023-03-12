@@ -73,7 +73,11 @@ class _AdoptionFormState extends State<AdoptionForm> {
       setState(() {
         _isloading = false;
       });
-      Navigator.pop(context);
+      if (widget.after_login) {
+        Navigator.pushReplacementNamed(context, HomePage.screenRoute);
+      } else {
+        Navigator.pop(context);
+      }
     }).catchError((e) {
       setState(() {
         _isloading = false;
@@ -146,7 +150,7 @@ class _AdoptionFormState extends State<AdoptionForm> {
   //         "adopter_age": _ageController.text,
   //         "adoption_reason": _adoptReasonController.text,
   //         "request_date": FieldValue.serverTimestamp(),
-  //         "pet_name": petName,
+
   //         "pet_image": petImage,
   //         "status": "قيد المعالجة"
   //       }).then((value) {
@@ -197,7 +201,7 @@ class _AdoptionFormState extends State<AdoptionForm> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-      appBar: getCustomAppBar(context),
+      appBar: getProfilePageAppBar(context),
       drawer: listView(),
       body: _isloading
           ? Center(
@@ -440,12 +444,9 @@ class _AdoptionFormState extends State<AdoptionForm> {
                                                 ),
                                                 textButtonTheme:
                                                     TextButtonThemeData(
-                                                  style: ButtonStyle(
-                                                    foregroundColor:
-                                                        MaterialStateProperty
-                                                            .all<Color>(
-                                                      Style.purpole,
-                                                    ), // button text color
+                                                  style: TextButton.styleFrom(
+                                                    foregroundColor: Style
+                                                        .purpole, // button text color
                                                   ),
                                                 ),
                                               ),
@@ -506,8 +507,9 @@ class _AdoptionFormState extends State<AdoptionForm> {
                                         _ageController.text.isEmpty) {
                                       showErrorDialog(
                                           "قم بتعبئة حميع المعلومات ", context);
-                                    } else
+                                    } else {
                                       save();
+                                    }
                                   } else {
                                     showErrorDialog(
                                         "قم بتعبئة جميع المعلومات", context);
@@ -517,13 +519,13 @@ class _AdoptionFormState extends State<AdoptionForm> {
                                 circular: 0,
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             widget.after_login
                                 ? Container(
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 25),
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 25),
                                     child: MyButton(
                                       color: Style.buttonColor_pink,
                                       title: "تخطي",

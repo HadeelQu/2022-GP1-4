@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ewaa_application/notification_service.dart';
 import 'package:ewaa_application/screens/adoption_form.dart';
 import 'package:ewaa_application/screens/adoption_request_info.dart';
 import 'package:ewaa_application/screens/editPetInfo.dart';
@@ -134,10 +135,8 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
         request_info["owner_id"] = widget.owner;
         request_info["pet_id"] = widget.petId;
         request_info["request_date"] = FieldValue.serverTimestamp();
-        request_info["pet_name"] = petName;
         request_info["pet_image"] = image;
         request_info["status"] = "قيد المعالجة";
-        request_info["numerical_status"] = 1; //newly added
         FirebaseFirestore.instance
             .collection("adoption_requests")
             .doc(request_id)
@@ -159,6 +158,11 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
                 .collection("notifications")
                 .doc(request_info["request_id"])
                 .set(notification);
+            // send fcm message
+            var to = [];
+            to.add(request_info["owner_id"]);
+            NotificationService().sendNotification("طلب تبني جديد",
+                " تم استقبال طلب جديد لتبني الحيوان " + petName, to);
           });
           checkIfAdopter();
           Fluttertoast.showToast(
@@ -498,7 +502,11 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
                             children: [
                               IconButton(
                                   onPressed: () async {
-                                    var petInfo = "الاسم:" + petName + "\n";
+                                    var petInfo = "Ewaa|إيواء \n";
+                                    petInfo = petInfo +
+                                        "معلومات حيوان متاح للتبني تمت مشاركته معك\n";
+                                    petInfo =
+                                        petInfo + "الاسم:" + petName + "\n";
                                     petInfo =
                                         petInfo + "النوع:" + petCategory + "\n";
                                     petInfo =
@@ -509,8 +517,14 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
                                         petInfo + "اللون:" + petColor + "\n";
                                     petInfo =
                                         petInfo + "العمر:" + petAge + "\n";
-                                    petInfo =
-                                        petInfo + "الصورة:" + "\n" + image;
+                                    petInfo = petInfo +
+                                        "الصورة:" +
+                                        "\n" +
+                                        image +
+                                        "\n";
+                                    petInfo = petInfo +
+                                        "للإطلاع على الحيوانات المتاحة للتبني حمل تطبيق إيواء" +
+                                        "\n";
                                     await Share.share(petInfo);
                                   },
                                   icon: Icon(
@@ -733,7 +747,7 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
                                       infoPet(
                                           "اسم العياده",
                                           nameOfHospital == ""
-                                              ? " ليس لديه ملف صحي"
+                                              ? " ليس لديه جواز صحي"
                                               : nameOfHospital),
                                       SizedBox(
                                         width: 12,

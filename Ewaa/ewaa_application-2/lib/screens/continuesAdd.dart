@@ -39,7 +39,7 @@ class _ContinuesAddState extends State<ContinuesAdd> {
   bool? _checkbox = false;
   var _petSelectedList = [];
   TextEditingController _personailty = TextEditingController();
-  var anotherPersonailty = [];
+  var anotherPersonailty = "";
   var petPersonailty = [];
   var petPersonailty2 = [];
 
@@ -161,7 +161,9 @@ class _ContinuesAddState extends State<ContinuesAdd> {
             "personalites": _petSelectedList,
             "image": url,
             "likedUsers": [],
+            "anotherPersonailty": _personailty.text,
             "genralPersonailty": GenralpetPersonailty,
+            "likes_count": 0
           });
           numberOfAdd = 1;
 
@@ -189,7 +191,6 @@ class _ContinuesAddState extends State<ContinuesAdd> {
     void initState() {
       // TODO: implement initState
       super.initState();
-      anotherPersonailty = [];
     }
 
     if (type == "قط") {
@@ -237,9 +238,6 @@ class _ContinuesAddState extends State<ContinuesAdd> {
             return "الرجاء ادخال اسم فقط يحتوي علي حروف";
           }
           print(value);
-          // setState(() {
-          //   _petSelectedList.add(value);
-          // });
 
           //anotherPersonailty.add(value);
 
@@ -696,14 +694,16 @@ class _ContinuesAddState extends State<ContinuesAdd> {
                                       //       "قم  بتعبئة معلومات شخصية الحيوان الاليف");
                                       // }
                                       if (isComplete) {
-                                        add();
-                                        _petSelectedList.remove("اخرى");
-                                        if (!_personailty.text.isEmpty) {
-                                          _petSelectedList
-                                              .add(_personailty.text);
+                                        if (!_personailty.text.isEmpty &&
+                                            _petSelectedList.contains("اخرى")) {
+                                          anotherPersonailty =
+                                              _personailty.text;
+                                          _petSelectedList[0] =
+                                              anotherPersonailty;
                                         }
+                                        _petSelectedList.remove("اخرى");
+                                        add();
 
-                                        print(anotherPersonailty.length);
                                         print(_petSelectedList);
                                       }
                                     } else {

@@ -378,7 +378,7 @@ class _ProfilePage extends State<ProfilePage> {
                                     color: Style.buttonColor_pink,
                                     title: "تعديل الملف الشخصي",
                                     onPeressed: () {
-                                      Navigator.pushReplacementNamed(
+                                      Navigator.pushNamed(
                                           context, EditProfilePage.screenRoute);
                                     }),
                               ),

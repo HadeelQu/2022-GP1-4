@@ -222,9 +222,9 @@ class _RequestsLogState extends State<RequestsLog> {
                                           child: Align(
                                             alignment: Alignment.center,
                                             child: Text(
-                                              document['pet_name'] == ""
+                                              document['petName'] == ""
                                                   ? "بدون اسم"
-                                                  : document['pet_name'],
+                                                  : document['petName'],
                                               style: TextStyle(
                                                 color: Style.black,
                                                 fontFamily: 'ElMessiri',

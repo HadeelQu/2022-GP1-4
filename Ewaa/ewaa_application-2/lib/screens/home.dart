@@ -1,11 +1,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dio/dio.dart';
-import 'package:ewaa_application/catPersonailty.dart';
-import 'package:ewaa_application/dogPersonailty.dart';
 import 'package:ewaa_application/screens/listPets.dart';
-import 'package:ewaa_application/screens/login.dart';
 
 import 'package:ewaa_application/screens/petInfo.dart';
 import 'package:ewaa_application/screens/search.dart';
@@ -13,8 +9,6 @@ import 'package:ewaa_application/widgets/bottom_nav.dart';
 import 'package:ewaa_application/widgets/custom_app_bar.dart';
 import 'package:ewaa_application/widgets/listView.dart';
 import 'package:flutter/material.dart';
-import 'package:ewaa_application/screens/profile.dart';
-import 'package:ewaa_application/screens/register.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
@@ -53,9 +47,10 @@ class _HomePageState extends State<HomePage> {
 
     if (_user != null) {
       final resopnse = await http.post(Uri.parse('https://ewaa.herokuapp.com/'),
-          // https://git.heroku.com/ewaa--00.git
-          // https://ewaa--00.herokuapp.com/'
           body: json.encode({
+            // "name": "hadeel",
+            // "personality": petsData,
+
             "userID": _user.uid,
           }));
       final recomm = json.decode(resopnse.body) as Map<String, dynamic>;
@@ -87,7 +82,7 @@ class _HomePageState extends State<HomePage> {
         pets_collaborative = FirebaseFirestore.instance
             .collection("pets")
             .where("isAdopted", isEqualTo: false)
-            .orderBy("likes_count")
+            .orderBy("likes_count", descending: false)
             .limit(10)
             .snapshots();
       });
@@ -186,10 +181,8 @@ class _HomePageState extends State<HomePage> {
                   height: 10,
                 ),
                 InkWell(
-                  onTap: () => {
-                    Navigator.pushReplacementNamed(
-                        context, SearchPage.screenRoute)
-                  },
+                  onTap: () =>
+                      {Navigator.pushNamed(context, SearchPage.screenRoute)},
                   child: Container(
                     margin: EdgeInsets.only(bottom: 26, left: 26, right: 26),
                     alignment: Alignment.center,
@@ -218,7 +211,7 @@ class _HomePageState extends State<HomePage> {
                             color: Colors.black.withOpacity(0.6),
                           ),
                           onPressed: () {
-                            Navigator.pushReplacementNamed(
+                            Navigator.pushNamed(
                                 context, SearchPage.screenRoute);
                           },
                         ),
@@ -339,7 +332,7 @@ class _HomePageState extends State<HomePage> {
                   width: 350,
                   height: 27,
                   child: Text(
-                    "حيوانات تناسب تفضيلاتك",
+                    "حيوانات قد تناسبك",
                     style: TextStyle(
                       color: Style.purpole.withOpacity(0.8),
                       fontFamily: 'ElMessiri',
@@ -443,13 +436,18 @@ class _HomePageState extends State<HomePage> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text(
-                                                doucument['breed'],
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  color: Style.black,
-                                                  fontFamily: 'ElMessiri',
-                                                  fontSize: 12,
+                                              Flexible(
+                                                fit: FlexFit.loose,
+                                                child: Text(
+                                                  doucument['breed'],
+                                                  textAlign: TextAlign.center,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    color: Style.black,
+                                                    fontFamily: 'ElMessiri',
+                                                    fontSize: 11,
+                                                  ),
                                                 ),
                                               ),
                                               Text(
@@ -626,13 +624,18 @@ class _HomePageState extends State<HomePage> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text(
-                                                doucument['breed'],
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  color: Style.black,
-                                                  fontFamily: 'ElMessiri',
-                                                  fontSize: 12,
+                                              Flexible(
+                                                fit: FlexFit.loose,
+                                                child: Text(
+                                                  doucument['breed'],
+                                                  textAlign: TextAlign.center,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    color: Style.black,
+                                                    fontFamily: 'ElMessiri',
+                                                    fontSize: 11,
+                                                  ),
                                                 ),
                                               ),
                                               Text(

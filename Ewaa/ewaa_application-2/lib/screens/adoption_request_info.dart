@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ewaa_application/notification_service.dart';
 import 'package:ewaa_application/screens/home.dart';
 import 'package:ewaa_application/style.dart';
+import 'package:ewaa_application/widgets/age_calculator.dart';
 import 'package:ewaa_application/widgets/button.dart';
 import 'package:ewaa_application/widgets/custom_app_bar.dart';
 import 'package:ewaa_application/widgets/listView.dart';
@@ -28,6 +30,7 @@ class _AdoptionRequestInfoState extends State<AdoptionRequestInfo> {
   late var petInfo;
   late var ownerInfo;
   late var isOwner = false;
+  late int adopterAge = 0;
 
   getRequestInfo() async {
     await _firestore
@@ -40,6 +43,18 @@ class _AdoptionRequestInfoState extends State<AdoptionRequestInfo> {
       });
       getPetInfo();
     });
+  }
+
+  getAdopterAge() {
+    var birthdate = requestInfo.get("adopter_age");
+    try {
+      DateTime bdate = DateTime.parse(birthdate);
+      setState(() {
+        adopterAge = findAge(bdate);
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
   getPetInfo() async {
@@ -88,6 +103,7 @@ class _AdoptionRequestInfoState extends State<AdoptionRequestInfo> {
         .then((doc) {
       setState(() {
         adopterInfo = doc;
+        getAdopterAge();
         _isloading = false;
       });
     });
@@ -99,13 +115,6 @@ class _AdoptionRequestInfoState extends State<AdoptionRequestInfo> {
     super.initState();
     getRequestInfo();
   }
-
-  void updateNumericalStatus(int numericalStatus) {
-    _firestore
-        .collection("adoption_requests")
-        .doc(widget.request_id)
-        .update({"numerical_status": numericalStatus});
-  } //newly added
 
   void updateRequestStatus(String state) {
     _firestore
@@ -142,6 +151,9 @@ class _AdoptionRequestInfoState extends State<AdoptionRequestInfo> {
     notification["request_id"] = widget.request_id;
     notification["status"] = "unseen";
     FirebaseFirestore.instance.collection("notifications").add(notification);
+    // send fcm message
+
+    NotificationService().sendNotification("تحديثات", content, to);
   }
 
   void rejectOtherRequests() {
@@ -258,7 +270,6 @@ class _AdoptionRequestInfoState extends State<AdoptionRequestInfo> {
                     title: "قبول",
                     onPeressed: () {
                       updateRequestStatus("مقبول");
-                      updateNumericalStatus(2); //newly added
                     })),
             SizedBox(
               width: 10,
@@ -269,7 +280,6 @@ class _AdoptionRequestInfoState extends State<AdoptionRequestInfo> {
                     title: "رفض",
                     onPeressed: () {
                       updateRequestStatus("مرفوض");
-                      updateNumericalStatus(3); //newly added
                     }))
           ],
         );
@@ -503,7 +513,7 @@ class _AdoptionRequestInfoState extends State<AdoptionRequestInfo> {
                                 Container(
                                   margin: EdgeInsets.only(right: 5),
                                   child: Text(
-                                    requestInfo.get("adopter_age"),
+                                    "${adopterAge} سنة",
                                     style: TextStyle(
                                         fontSize: 18,
                                         fontFamily: 'ElMessiri',

@@ -1,3 +1,4 @@
+import 'package:ewaa_application/notification_service.dart';
 import 'package:ewaa_application/screens/addP.dart';
 import 'package:ewaa_application/screens/continuesAdd.dart';
 import 'package:ewaa_application/screens/edit_profile.dart';
@@ -13,6 +14,8 @@ import 'package:ewaa_application/screens/profile.dart';
 import 'package:ewaa_application/screens/register.dart';
 import 'package:ewaa_application/screens/search.dart';
 import 'package:ewaa_application/style.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -20,9 +23,49 @@ import 'screens/adoption_form.dart';
 import 'screens/my_pets_screen.dart';
 import 'screens/requests_log.dart';
 
+var fcm = FirebaseMessaging.instance;
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  if (Firebase.apps.length == 0) await Firebase.initializeApp();
+  var _auth = FirebaseAuth.instance;
+  if (_auth.currentUser == null) return;
+  var data = message.data;
+  var to_user = data["to_user"];
+  print(to_user);
+  var body = data["body"];
+  var title = data["title"];
+  if (to_user.contains(_auth.currentUser!.uid)) {
+    NotificationService().createAlertNotifications(title, body);
+  }
+
+  print("Handling a background message: ${message.messageId}-${message.data}");
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  NotificationService().init();
   await Firebase.initializeApp();
+
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print('Got a message whilst in the foreground!');
+    print('Message data: ${message.data}');
+    var _auth = FirebaseAuth.instance;
+    if (_auth.currentUser == null) return;
+    var data = message.data;
+    var to_user = data["to_user"];
+    print(to_user);
+    var body = data["body"];
+    var title = data["title"];
+    if (to_user.contains(_auth.currentUser!.uid)) {
+      NotificationService().createAlertNotifications(title, body);
+    }
+  });
+  fcm.getInitialMessage().then(
+      (value) => value != null ? _firebaseMessagingBackgroundHandler : false);
+
+  await fcm.subscribeToTopic("all");
   runApp(const MyApp());
 }
 

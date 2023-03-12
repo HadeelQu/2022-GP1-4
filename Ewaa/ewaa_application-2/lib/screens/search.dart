@@ -180,7 +180,7 @@ class _SearchPageState extends State<SearchPage> {
           .first['age'];
       query = query.where('age', isEqualTo: age);
     }
-    return query.orderBy("addedAt", descending: true).limit(5).snapshots();
+    return query.orderBy("addedAt", descending: true).snapshots();
   }
 
   @override
@@ -189,7 +189,7 @@ class _SearchPageState extends State<SearchPage> {
 
     return SafeArea(
       child: Scaffold(
-        appBar: getCustomAppBar(context),
+        appBar: getProfilePageAppBar(context),
         drawer: listView(),
         body: Column(children: [
           Row(
@@ -577,7 +577,6 @@ class _SearchPageState extends State<SearchPage> {
             ),
           )
         ]),
-        bottomNavigationBar: BottomNav(selectedPage: SearchPage.screenRoute),
       ),
     );
   }

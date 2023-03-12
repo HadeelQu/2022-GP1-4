@@ -108,7 +108,7 @@ class _LoginState extends State<Login> {
               showDialog(
                   context: context,
                   builder: (context) => ShowAuthDialog(
-                      "الحساب غير مفعل..يرجى مراجعة بريدك لتفعيل الحساب"));
+                      "الحساب غير مفعل \n يرجى مراجعة بريدك لتفعيل الحساب"));
             } else {
               FirebaseFirestore.instance
                   .collection("Users")

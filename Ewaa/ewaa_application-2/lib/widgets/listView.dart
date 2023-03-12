@@ -135,25 +135,7 @@ class _listView extends State<listView> {
                   Navigator.pushNamed(context, AddPets.screenRoute);
                 },
               ),
-              ListTile(
-                leading: Icon(
-                  Icons.list,
-                  color: Style.purpole,
-                ),
-                title: const Text(
-                  'طلبات التبني',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 15,
-                    fontFamily: 'ElMessiri',
-                    fontWeight: FontWeight.w200,
-                  ),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, MyRequests.screenRoute);
-                },
-              ),
+
               ListTile(
                 leading: Icon(
                   Icons.pets,
@@ -173,24 +155,24 @@ class _listView extends State<listView> {
                   Navigator.pushNamed(context, MyPetsPage.screenRoute);
                 },
               ),
-              ListTile(
-                leading: Icon(
-                  Icons.history,
-                  color: Style.purpole,
-                ),
-                title: const Text(
-                  'العمليات السابقة',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 15,
-                    fontFamily: 'ElMessiri',
-                    fontWeight: FontWeight.w200,
-                  ),
-                ),
-                onTap: () {
-                  Navigator.pushNamed(context, RequestsLog.screenRoute);
-                },
-              ),
+              // ListTile(
+              //   leading: Icon(
+              //     Icons.history,
+              //     color: Style.purpole,
+              //   ),
+              //   title: const Text(
+              //     'العمليات السابقة',
+              //     style: TextStyle(
+              //       color: Colors.black,
+              //       fontSize: 15,
+              //       fontFamily: 'ElMessiri',
+              //       fontWeight: FontWeight.w200,
+              //     ),
+              //   ),
+              //   onTap: () {
+              //     Navigator.pushNamed(context, RequestsLog.screenRoute);
+              //   },
+              // ),
               // ListTile(
               //   leading: Icon(
               //     Icons.help,

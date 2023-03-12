@@ -90,144 +90,177 @@ class _FavouritesPageState extends State<FavouritesPage> {
                             var uplodedAtDate = uplodedAt.toDate();
                             addedAt =
                                 '${uplodedAtDate.year}-${uplodedAtDate.month}-${uplodedAtDate.day}';
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            return Stack(
                               children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
                                   children: [
-                                    Container(
-                                      width: 350,
-                                      height: 103,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        color: Style.textFieldsColor_lightpink
-                                            .withOpacity(0.4),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: [
-                                          Container(
-                                            width: 90,
-                                            height: 90,
-                                            margin: EdgeInsets.only(right: 8),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(14),
-                                              image: DecorationImage(
-                                                image: NetworkImage(
-                                                  doucument['image'],
-                                                ),
-                                                fit: BoxFit.fill,
-                                              ),
-                                            ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          width: 350,
+                                          height: 103,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color: Style
+                                                .textFieldsColor_lightpink
+                                                .withOpacity(0.4),
                                           ),
-                                          Container(
-                                            width: 230,
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      petname,
-                                                      style: TextStyle(
-                                                        color: Style.black,
-                                                        fontFamily: 'ElMessiri',
-                                                        fontSize: 20,
-                                                      ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                            children: [
+                                              Container(
+                                                width: 90,
+                                                height: 90,
+                                                margin:
+                                                    EdgeInsets.only(right: 8),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(14),
+                                                  image: DecorationImage(
+                                                    image: NetworkImage(
+                                                      doucument['image'],
                                                     ),
-                                                    Text(
-                                                      addedAt.toString(),
-                                                      style: TextStyle(
-                                                        color: Style.black,
-                                                        fontFamily: 'ElMessiri',
-                                                        fontSize: 13,
-                                                      ),
+                                                    fit: BoxFit.fill,
+                                                  ),
+                                                ),
+                                              ),
+                                              Container(
+                                                width: 230,
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          petname,
+                                                          style: TextStyle(
+                                                            color: Style.black,
+                                                            fontFamily:
+                                                                'ElMessiri',
+                                                            fontSize: 20,
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          addedAt.toString(),
+                                                          style: TextStyle(
+                                                            color: Style.black,
+                                                            fontFamily:
+                                                                'ElMessiri',
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceEvenly,
+                                                        children: [
+                                                          Text(
+                                                            doucument['breed'],
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Style.black,
+                                                              fontFamily:
+                                                                  'ElMessiri',
+                                                              fontSize: 14,
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            doucument['gender'],
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Style.black,
+                                                              fontFamily:
+                                                                  'ElMessiri',
+                                                              fontSize: 14,
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            'العمر : ' +
+                                                                doucument[
+                                                                    'age'],
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Style.black,
+                                                              fontFamily:
+                                                                  'ElMessiri',
+                                                              fontSize: 14,
+                                                            ),
+                                                          ),
+                                                        ]),
+                                                    Container(
+                                                      height: 36,
+                                                      margin: EdgeInsets.only(
+                                                          right: 80),
+                                                      child: MyButton2(
+                                                          color: Style
+                                                              .buttonColor_pink,
+                                                          title:
+                                                              "عرض الحيوان الأليف",
+                                                          onPeressed: () {
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        PetInfo(
+                                                                  petId: doucument[
+                                                                      'petId'],
+                                                                  owner: doucument[
+                                                                      'ownerId'],
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }),
                                                     ),
                                                   ],
                                                 ),
-                                                Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceEvenly,
-                                                    children: [
-                                                      Text(
-                                                        doucument['breed'],
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: TextStyle(
-                                                          color: Style.black,
-                                                          fontFamily:
-                                                              'ElMessiri',
-                                                          fontSize: 14,
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        doucument['gender'],
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: TextStyle(
-                                                          color: Style.black,
-                                                          fontFamily:
-                                                              'ElMessiri',
-                                                          fontSize: 14,
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        'العمر : ' +
-                                                            doucument['age'],
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: TextStyle(
-                                                          color: Style.black,
-                                                          fontFamily:
-                                                              'ElMessiri',
-                                                          fontSize: 14,
-                                                        ),
-                                                      ),
-                                                    ]),
-                                                Container(
-                                                  height: 36,
-                                                  margin: EdgeInsets.only(
-                                                      right: 80),
-                                                  child: MyButton2(
-                                                      color: Style
-                                                          .buttonColor_pink,
-                                                      title:
-                                                          "عرض الحيوان الأليف",
-                                                      onPeressed: () {
-                                                        Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                            builder:
-                                                                (context) =>
-                                                                    PetInfo(
-                                                              petId: doucument[
-                                                                  'petId'],
-                                                              owner: doucument[
-                                                                  'ownerId'],
-                                                            ),
-                                                          ),
-                                                        );
-                                                      }),
-                                                ),
-                                              ],
-                                            ),
+                                              ),
+                                            ],
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
+                                    SizedBox(
+                                      height: 10,
+                                    )
                                   ],
                                 ),
-                                SizedBox(
-                                  height: 10,
-                                )
+                                doucument['isAdopted'] != null &&
+                                        doucument['isAdopted'] == true
+                                    ? Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0),
+                                        child: CircleAvatar(
+                                            radius: 25,
+                                            backgroundColor:
+                                                Style.buttonColor_pink,
+                                            child: Text(
+                                              "تم التبني",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
+                                      )
+                                    : const SizedBox(),
                               ],
                             );
                           }).toList(),

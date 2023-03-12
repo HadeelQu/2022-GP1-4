@@ -29,26 +29,26 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  auto_route: ^2.3.2
+  auto_route: ^5.0.4
   salomon_bottom_bar: ^3.1.0
   cupertino_icons: ^1.0.2
-  http: ^0.13.5
 
   flutter_localizations: # Add this line
     sdk: flutter # Add this line
-  firebase_core: ^1.24.0
-  firebase_auth: ^3.11.2
+  firebase_core: ^2.7.1
+  firebase_auth: ^4.2.10
+  firebase_messaging: ^14.2.6
   email_validator: ^2.0.1
   phone_form_field: ^7.0.2
-  cloud_firestore: ^3.5.1
+  cloud_firestore: ^4.4.4
   image_picker: ^0.8.6
   snippet_coder_utils: ^1.0.12
   uuid: ^3.0.6
-  toast: ^0.2.9
+  toast: ^0.3.0
   fluttertoast: ^8.1.1
   #cupertino_icons: ^1.0.2
-  chips_choice: ^2.1.1
-  firebase_storage: ^10.3.11
+  chips_choice: ^3.0.0
+  firebase_storage: ^11.0.15
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   modal_progress_hud_nsn: ^0.3.0
@@ -57,15 +57,21 @@ dependencies:
   share_plus: ^6.3.0
   url_launcher: ^6.0.0
   intl: ^0.17.0
-  dio: ^4.0.6
-  dcdg: ^4.1.0
+  dio: ^5.0.2
+  awesome_notifications: ^0.7.4+1
+  flutter_launcher_icons: ^0.12.0
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
+
+flutter_icons:
+  android: "launcher_icon"
+  image_path: "images/logo.png"
+  min_sdk_android: 21
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  auto_route_generator: ^2.3.2
+  auto_route_generator: ^5.0.3
   build_runner: ^2.1.2
 
   # The "flutter_lints" package below contains a set of recommended lints to

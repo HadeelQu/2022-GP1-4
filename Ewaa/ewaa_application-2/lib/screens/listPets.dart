@@ -37,17 +37,20 @@ class _ListPetsPage extends State<ListPetsPage> {
         return FirebaseFirestore.instance
             .collection("pets")
             .where("category", isEqualTo: "قط")
+            .where("isAdopted", isEqualTo: false)
             .orderBy("addedAt", descending: true)
             .snapshots();
       } else if (args as String == "كلاب") {
         return FirebaseFirestore.instance
             .collection("pets")
             .where("category", isEqualTo: "كلب")
+            .where("isAdopted", isEqualTo: false)
             .orderBy("addedAt", descending: true)
             .snapshots();
       } else if (args as String == "الكل") {
         return FirebaseFirestore.instance
             .collection("pets")
+            .where("isAdopted", isEqualTo: false)
             .orderBy("addedAt", descending: true)
             .snapshots();
       }
@@ -160,7 +163,10 @@ class _ListPetsPage extends State<ListPetsPage> {
                         size: 30,
                         color: Colors.black.withOpacity(0.6),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(
+                            context, SearchPage.screenRoute);
+                      },
                     ),
                   ],
                 ),

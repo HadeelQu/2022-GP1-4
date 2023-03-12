@@ -61,7 +61,6 @@ class _ContinuesEdit extends State<ContinuesEdit> {
 
   var _petSelectedList = [];
 
-  var anotherPersonailty = [];
   var petPersonailty = [];
   var petPersonailty2 = [];
 
@@ -82,7 +81,7 @@ class _ContinuesEdit extends State<ContinuesEdit> {
   late var reasonsOfAdoption;
   late var supplies;
   late var petSelectedList;
-
+  late var anotherPersonailty;
   late var ActupetBreed;
 
   final _auth = FirebaseAuth.instance;
@@ -109,20 +108,28 @@ class _ContinuesEdit extends State<ContinuesEdit> {
           _healthProfileCont.text = healthProfileCont;
           reasonsOfAdoption = petInfo.get("reasonsOfAdoption");
           _reasonsOfAdoption.text = reasonsOfAdoption;
+          anotherPersonailty = petInfo.get("anotherPersonailty");
+          _personailty.text = anotherPersonailty;
+          print("another==" + anotherPersonailty);
 
           supplies = petInfo.get("supplies");
           _supplies.text = supplies;
 
           petSelectedList = petInfo.get("personalites");
+
           if (ActupetBreed == widget.breed) {
             _petSelectedList = petSelectedList;
             if (petSelectedList[0] != "") _petSelectedList.add("اخرى");
+            if (anotherPersonailty != null && anotherPersonailty != "") {
+              _personailty.text = anotherPersonailty;
+              print("another==" + anotherPersonailty);
+            }
           } else {
             _petSelectedList = [];
             _petSelectedList.add("");
           }
 
-          _personailty.text = petSelectedList[0];
+          //_personailty.text = petSelectedList[0];
 
           selectedIncolustion = incolustion;
           selectedNeutering = neutering;
@@ -240,6 +247,18 @@ class _ContinuesEdit extends State<ContinuesEdit> {
               .get();
           var checkImage = check.get("image");
 
+          if (_personailty.text.isEmpty && !_petSelectedList.contains("اخرى")) {
+            setState(() {
+              petSelectedList[0] = "";
+            });
+          }
+          if (_personailty.text.isNotEmpty &&
+              _petSelectedList.contains("اخرى")) {
+            setState(() {
+              petSelectedList[0] = _personailty.text;
+            });
+          }
+
           if (widget.image == checkImage) {
             await FirebaseFirestore.instance
                 .collection("pets")
@@ -260,6 +279,7 @@ class _ContinuesEdit extends State<ContinuesEdit> {
               "reasonsOfAdoption": _reasonsOfAdoption.text,
               "supplies": _supplies.text,
               "personalites": _petSelectedList,
+              "anotherPersonailty": _personailty.text,
               "genralPersonailty": GenralpetPersonailty,
             });
           } else {
@@ -294,11 +314,26 @@ class _ContinuesEdit extends State<ContinuesEdit> {
               "nameOfHospital": _healthProfileCont.text,
               "reasonsOfAdoption": _reasonsOfAdoption.text,
               "supplies": _supplies.text,
+              "anotherPersonailty": _personailty.text,
               "personalites": _petSelectedList,
               "image": url,
               "genralPersonailty": GenralpetPersonailty,
             });
           }
+
+          //update pet name i all request
+          var batch = FirebaseFirestore.instance.batch();
+
+          FirebaseFirestore.instance
+              .collection("adoption_requests")
+              .where("pet_id", isEqualTo: widget.petId)
+              .get()
+              .then((requests) {
+            for (var request in requests.docs) {
+              batch.update(request.reference, {"petName": widget.name});
+            }
+            batch.commit();
+          });
 
           Fluttertoast.showToast(
               msg: " تم التحديث بنجاح ",
@@ -323,7 +358,6 @@ class _ContinuesEdit extends State<ContinuesEdit> {
     void initState() {
       // TODO: implement initState
       super.initState();
-      anotherPersonailty = [];
     }
 
     if (widget.type == "قط") {
@@ -798,7 +832,10 @@ class _ContinuesEdit extends State<ContinuesEdit> {
                             SizedBox(
                               height: 15,
                             ),
-                            _petSelectedList.contains("اخرى")
+                            (anotherPersonailty != null &&
+                                        anotherPersonailty != "" &&
+                                        _petSelectedList.contains("اخرى")) ||
+                                    _petSelectedList.contains("اخرى")
                                 ? addAnotherPer()
                                 : Container(),
                             SizedBox(

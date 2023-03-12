@@ -206,7 +206,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
         "phoneNumber": _phoneNumber,
         // image
       }).then((value) {
-        Fluttertoast.showToast(msg: "تم تحديث المعلومات بنجاح");
+        Navigator.of(context).pop();
+
+        Fluttertoast.showToast(
+            msg: "تم تحديث المعلومات بنجاح",
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 2,
+            backgroundColor: Style.textFieldsColor_lightpink,
+            textColor: Style.purpole,
+            fontSize: 16.0);
 
         setState(() {
           _isloading = false;
