@@ -534,14 +534,6 @@ class _ProfilePage extends State<ProfilePage> {
                         },
                       ),
 
-                      MyTextButton(
-                        text: "العمليات السابقة",
-                        icon: Icons.history,
-                        onPressed: () {
-                          Navigator.pushNamed(context, RequestsLog.screenRoute);
-                        },
-                      ),
-
                       Divider(
                         color: Colors.grey[600],
                       ),

@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ewaa_application/notification_service.dart';
 import 'package:ewaa_application/screens/home.dart';
 import 'package:ewaa_application/style.dart';
 import 'package:ewaa_application/widgets/age_calculator.dart';
@@ -43,18 +42,6 @@ class _AdoptionRequestInfoState extends State<AdoptionRequestInfo> {
       });
       getPetInfo();
     });
-  }
-
-  getAdopterAge() {
-    var birthdate = requestInfo.get("adopter_age");
-    try {
-      DateTime bdate = DateTime.parse(birthdate);
-      setState(() {
-        adopterAge = findAge(bdate);
-      });
-    } catch (e) {
-      print(e);
-    }
   }
 
   getPetInfo() async {
@@ -109,6 +96,18 @@ class _AdoptionRequestInfoState extends State<AdoptionRequestInfo> {
     });
   }
 
+  getAdopterAge() {
+    var birthdate = requestInfo.get("adopter_age");
+    try {
+      DateTime bdate = DateTime.parse(birthdate);
+      setState(() {
+        adopterAge = findAge(bdate);
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -151,9 +150,6 @@ class _AdoptionRequestInfoState extends State<AdoptionRequestInfo> {
     notification["request_id"] = widget.request_id;
     notification["status"] = "unseen";
     FirebaseFirestore.instance.collection("notifications").add(notification);
-    // send fcm message
-
-    NotificationService().sendNotification("تحديثات", content, to);
   }
 
   void rejectOtherRequests() {
@@ -394,13 +390,13 @@ class _AdoptionRequestInfoState extends State<AdoptionRequestInfo> {
                                 ? Container(
                                     alignment: Alignment.center,
                                     height: MediaQuery.of(context).size.height *
-                                        0.4,
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.2,
+                                        0.27,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.25,
                                     child: Container(
                                       decoration: BoxDecoration(
                                           borderRadius: BorderRadius.all(
-                                              Radius.circular(35)),
+                                              Radius.circular(30)),
                                           image: DecorationImage(
                                               fit: BoxFit.fill,
                                               image: NetworkImage(
@@ -424,186 +420,256 @@ class _AdoptionRequestInfoState extends State<AdoptionRequestInfo> {
                             SizedBox(
                               height: 20,
                             ),
-                            Container(
-                              child: Text(
-                                petInfo.get("petName"),
-                                style: TextStyle(
-                                  color: Style.purpole,
-                                  fontSize: 26,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'ElMessiri',
-                                ),
-                              ),
-                            ),
+
                             SizedBox(
                               height: 10,
                             ),
-                            Row(
-                              children: [
-                                Container(
-                                  alignment: Alignment.topRight,
-                                  child: Text(
-                                    "هل لديك حيوان أليف:",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Style.black,
-                                      fontSize: 20,
-                                      fontFamily: 'ElMessiri',
-                                    ),
-                                  ),
+                            Align(
+                              child: Container(
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.all(13),
+                                decoration: new BoxDecoration(
+                                  color: Style.textFieldsColor_lightpink
+                                      .withOpacity(0.8),
+                                  border: Border.all(
+                                      color: Colors.black.withOpacity(0.2),
+                                      width: 2),
+                                  borderRadius: new BorderRadius.all(
+                                      Radius.elliptical(2, 10)),
                                 ),
-                                Container(
-                                  margin: EdgeInsets.only(right: 5),
-                                  child: Text(
-                                    requestInfo.get("has_pet"),
+                                child: Text(
+                                    " معلومات مقدم طلب التبني لـ " +
+                                        petInfo.get("petName"),
                                     style: TextStyle(
-                                        fontSize: 18,
+                                        fontSize: 19,
+                                        fontWeight: FontWeight.bold,
                                         fontFamily: 'ElMessiri',
-                                        color: Style.purpole),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Row(
-                              children: [
-                                Container(
-                                  alignment: Alignment.topRight,
-                                  child: Text(
-                                    "الحالة الوظيفية:",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Style.black,
-                                      fontSize: 20,
-                                      fontFamily: 'ElMessiri',
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(right: 5),
-                                  child: Text(
-                                    requestInfo.get("job_state"),
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontFamily: 'ElMessiri',
-                                        color: Style.purpole),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Row(
-                              children: [
-                                Container(
-                                  alignment: Alignment.topRight,
-                                  child: Text(
-                                    "العمر:",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Style.black,
-                                      fontSize: 20,
-                                      fontFamily: 'ElMessiri',
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(right: 5),
-                                  child: Text(
-                                    "${adopterAge} سنة",
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontFamily: 'ElMessiri',
-                                        color: Style.purpole),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Container(
-                              alignment: Alignment.topRight,
-                              child: Text(
-                                "اسباب الرغبة في تبني الحيوان:",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Style.black,
-                                  fontSize: 20,
-                                  fontFamily: 'ElMessiri',
-                                ),
-                              ),
-                            ),
-                            Container(
-                              child: Text(
-                                requestInfo.get("adoption_reason") == ""
-                                    ? "الأسباب غير مذكورة"
-                                    : requestInfo.get("adoption_reason"),
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    fontFamily: 'ElMessiri',
-                                    color: Style.purpole),
+                                        color: Style.purpole)),
                               ),
                             ),
                             SizedBox(
-                              height: 20,
+                              height: 12,
                             ),
                             Row(
                               children: [
-                                Expanded(
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    padding: EdgeInsets.all(20),
-                                    decoration: new BoxDecoration(
-                                      color:
-                                          requestInfo.get("has_allergy") == "لا"
-                                              ? Style.textFieldsColor_lightpink
-                                              : Colors.white,
-                                      border: Border.all(
-                                          color: Style.purpole, width: 0.0),
-                                      borderRadius: new BorderRadius.all(
-                                          Radius.elliptical(100, 50)),
-                                    ),
-                                    child: Text(
-                                        'ليس لدي / لدى عائلتي حساسية من الحيوانات',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: 'ElMessiri',
-                                            color: Style.purpole)),
-                                  ),
-                                ),
+                                requestInfo.get("has_pet") == "لا"
+                                    ? Expanded(
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          padding: EdgeInsets.all(20),
+                                          decoration: new BoxDecoration(
+                                            color: Style
+                                                .textFieldsColor_lightpink
+                                                .withOpacity(0.3),
+                                            borderRadius: new BorderRadius.all(
+                                                Radius.elliptical(2, 10)),
+                                          ),
+                                          child: Text(
+                                            " ليس لديه حيوان أليف",
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontFamily: 'ElMessiri',
+                                                color: Style.purpole),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      )
+                                    : Expanded(
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          padding: EdgeInsets.all(20),
+                                          decoration: new BoxDecoration(
+                                            color: Style
+                                                .textFieldsColor_lightpink
+                                                .withOpacity(0.3),
+                                            borderRadius: new BorderRadius.all(
+                                                Radius.elliptical(2, 10)),
+                                          ),
+                                          child: Text(
+                                            " لديه حيوان أليف",
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontFamily: 'ElMessiri',
+                                                color: Style.purpole),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ),
                                 SizedBox(
                                   width: 5,
                                 ),
                                 Expanded(
                                   child: Container(
+                                    alignment: Alignment.center,
                                     padding: EdgeInsets.all(20),
                                     decoration: new BoxDecoration(
-                                      color: requestInfo.get("has_allergy") ==
-                                              "نعم"
-                                          ? Style.textFieldsColor_lightpink
-                                          : Colors.white,
-                                      border: Border.all(
-                                          color: Style.purpole, width: 0.0),
+                                      color: Style.textFieldsColor_lightpink
+                                          .withOpacity(0.3),
                                       borderRadius: new BorderRadius.all(
-                                          Radius.elliptical(100, 50)),
+                                          Radius.elliptical(2, 10)),
                                     ),
                                     child: Text(
-                                        ' لدي / لدى عائلتي حساسية من الحيوانات',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: 'ElMessiri',
-                                            color: Style.purpole)),
+                                      requestInfo.get("job_state"),
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontFamily: 'ElMessiri',
+                                          color: Style.purpole),
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
+                            //=====================================
                             SizedBox(
-                              height: 15,
+                              height: 12,
                             ),
+                            //==================----------------------------------------
+                            Row(
+                              children: [
+                                requestInfo.get("has_allergy") == "لا"
+                                    ? Expanded(
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          padding: EdgeInsets.all(20),
+                                          decoration: new BoxDecoration(
+                                            color: Style
+                                                .textFieldsColor_lightpink
+                                                .withOpacity(0.3),
+                                            borderRadius: new BorderRadius.all(
+                                                Radius.elliptical(2, 10)),
+                                          ),
+                                          child: Text(
+                                            "لا توجد حساسية",
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontFamily: 'ElMessiri',
+                                                color: Style.purpole),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      )
+                                    : Expanded(
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          padding: EdgeInsets.all(20),
+                                          decoration: new BoxDecoration(
+                                            color: Style
+                                                .textFieldsColor_lightpink
+                                                .withOpacity(0.3),
+                                            borderRadius: new BorderRadius.all(
+                                                Radius.elliptical(2, 10)),
+                                          ),
+                                          child: Text(
+                                            "توجد حساسية",
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontFamily: 'ElMessiri',
+                                                color: Style.purpole),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    padding: EdgeInsets.all(20),
+                                    decoration: new BoxDecoration(
+                                      color: Style.textFieldsColor_lightpink
+                                          .withOpacity(0.3),
+                                      borderRadius: new BorderRadius.all(
+                                          Radius.elliptical(2, 10)),
+                                    ),
+                                    child: Text(
+                                      "${adopterAge} سنة",
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontFamily: 'ElMessiri',
+                                          color: Style.purpole),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            //============-----------------------------------------
+
+                            SizedBox(
+                              height: 12,
+                            ),
+                            Align(
+                              child: Container(
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.all(13),
+                                decoration: new BoxDecoration(
+                                  color: Style.textFieldsColor_lightpink
+                                      .withOpacity(0.8),
+                                  border: Border.all(
+                                      color: Colors.black.withOpacity(0.2),
+                                      width: 2),
+                                  borderRadius: new BorderRadius.all(
+                                      Radius.elliptical(2, 10)),
+                                ),
+                                child: Text("اسباب الرغبة في تبني الحيوان",
+                                    style: TextStyle(
+                                        fontSize: 19,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'ElMessiri',
+                                        color: Style.purpole)),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 12,
+                            ),
+                            requestInfo.get("adoption_reason") == ""
+                                ? Expanded(
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      padding: EdgeInsets.all(20),
+                                      decoration: new BoxDecoration(
+                                        color: Style.textFieldsColor_lightpink
+                                            .withOpacity(0.3),
+                                        borderRadius: new BorderRadius.all(
+                                            Radius.elliptical(2, 10)),
+                                      ),
+                                      child: Text(
+                                        "الأسباب غير مذكورة",
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontFamily: 'ElMessiri',
+                                            color: Style.purpole),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  )
+                                : Expanded(
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      padding: EdgeInsets.all(20),
+                                      decoration: new BoxDecoration(
+                                        color: Style.textFieldsColor_lightpink
+                                            .withOpacity(0.1),
+                                        borderRadius: new BorderRadius.all(
+                                            Radius.elliptical(2, 10)),
+                                      ),
+                                      child: Text(
+                                        requestInfo.get("adoption_reason"),
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontFamily: 'ElMessiri',
+                                            color: Style.purpole),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+
+                            SizedBox(
+                              height: 12,
+                            ),
+
                             Padding(
                               padding: const EdgeInsets.all(12.0),
                               child: getControlButtons(),

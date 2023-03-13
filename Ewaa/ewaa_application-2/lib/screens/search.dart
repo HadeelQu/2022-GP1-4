@@ -403,7 +403,10 @@ class _SearchPageState extends State<SearchPage> {
 
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(
+                      color: Style.purpole,
+                      // backgroundColor: Style.purpole,
+                    ),
                   );
                 } else if (snapshot.data!.docs.isEmpty) {
                   return Container(

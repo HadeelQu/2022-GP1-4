@@ -391,7 +391,7 @@ class _ContinuesEdit extends State<ContinuesEdit> {
           // print(value);
 
           return null;
-        }, 1, 15),
+        }, 1, 40),
       );
     }
 

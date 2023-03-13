@@ -242,7 +242,7 @@ class _ContinuesAddState extends State<ContinuesAdd> {
           //anotherPersonailty.add(value);
 
           return null;
-        }, 1, 15),
+        }, 1, 40),
       );
     }
 

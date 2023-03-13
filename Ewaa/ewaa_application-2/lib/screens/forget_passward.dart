@@ -67,12 +67,20 @@ class _ForgfetPasswardState extends State<ForgfetPassward> {
     return SafeArea(
         child: Scaffold(
             appBar: AppBar(
-              backgroundColor: Colors.transparent, //transparent
-              elevation: 0.0,
-              iconTheme: IconThemeData(color: Style.black, size: 28),
-              toolbarHeight: 75,
-              actions: [],
-            ),
+                backgroundColor: Colors.transparent, //transparent
+                elevation: 0.0,
+                iconTheme: IconThemeData(color: Style.black, size: 28),
+                toolbarHeight: 75,
+                actions: [
+                  IconButton(
+                      icon: Icon(
+                        Icons.arrow_forward_sharp,
+                        size: 30,
+                      ),
+                      onPressed: () {
+                        Navigator.popAndPushNamed(context, Login.screenRoute);
+                      }),
+                ]),
             body: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
