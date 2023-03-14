@@ -37,6 +37,7 @@ class _AdoptionFormState extends State<AdoptionForm> {
   var hasApet;
   var hasAllergy;
   var jobState;
+  var selectedJobId = 1;
   List<dynamic> jobList = [];
 
   bool _isloading = false;
@@ -62,6 +63,20 @@ class _AdoptionFormState extends State<AdoptionForm> {
         .collection("Users")
         .doc(uid)
         .update({"adoption_info": new_adoption_info}).then((value) {
+      //update pet name i all request
+      var batch = FirebaseFirestore.instance.batch();
+
+      FirebaseFirestore.instance
+          .collection("adoption_requests")
+          .where("adopter_id", isEqualTo: uid)
+          .get()
+          .then((requests) {
+        for (var request in requests.docs) {
+          batch.update(request.reference, new_adoption_info);
+        }
+        batch.commit();
+      });
+
       Fluttertoast.showToast(
           msg: "تم تحديث المعلومات بنجاح",
           toastLength: Toast.LENGTH_LONG,
@@ -98,10 +113,11 @@ class _AdoptionFormState extends State<AdoptionForm> {
           adoption_info = userInfo.get("adoption_info");
           hasApet = adoption_info["has_pet"];
           hasAllergy = adoption_info["has_allergy"];
-          jobState = this
+          selectedJobId = this
               .jobList
               .where((job) => job["role"] == adoption_info["job_state"])
               .first["id"];
+          jobState = adoption_info["job_state"];
           _ageController.text = adoption_info["adopter_age"];
           _adoptReasonController.text = adoption_info["adoption_reason"];
         }
@@ -359,7 +375,7 @@ class _AdoptionFormState extends State<AdoptionForm> {
                             FormHelper.dropDownWidget(
                               context,
                               "الحالة",
-                              this.jobState,
+                              this.selectedJobId,
                               this.jobList,
                               (id) {
                                 setState(() {
