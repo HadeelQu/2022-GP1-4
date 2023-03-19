@@ -8,27 +8,34 @@ from firebase_admin import firestore
 from firebase_admin import initialize_app
 import firebase_admin
 import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
+# from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
-from scipy.sparse import csr_matrix
+# from scipy.sparse import csr_matrix
 from sklearn.metrics.pairwise import cosine_similarity
+import re
+import json
+import requests
 app = Flask(__name__)
 
 
-@app.route('/api', methods=['POST'])
+@app.route('/', methods=['POST'])
 def getSimilarity():
 
     global response
     if (request.method == "POST"):
+        request_data = request.data
+        request_data = json.loads(request_data.decode('utf-8'))
         if not firebase_admin._apps:
+            # reed the key og firebase from  ewaa apllication
             cred = credentials.Certificate(
-                "/Users/hadeelkhalid/Desktop/PythonProjects/Flutter_Flask_Basic/API/Ewaa.json")
+                request_data['cer'])
             firebase_admin.initialize_app(cred)
 
         db = firestore.client()
-
+        # Get all prt from firebase
         pets = list(db.collection('pets').stream())
         most_like = []
+        # Get the most ten like pet
         mostlike = db.collection('pets').where("isAdopted", "==", False).order_by(
             "likes_count", 'DESCENDING').limit(10).get()
         for i in mostlike:
@@ -44,7 +51,7 @@ def getSimilarity():
             j = i.to_dict()
             least_like.append(j['petId'])
         print(least_like)
-
+        # tranform the stram to dic and save it to datafram
         pets_dict = list(map(lambda x: x.to_dict(), pets))
         df = pd.DataFrame(pets_dict)
         print(df)
@@ -54,6 +61,7 @@ def getSimilarity():
         #name = request_data['name']
         #p = request_data['personality']
         # print(p)
+        # get the user id of the active user
         print(request_data['userID'])
         df.info()
         data2 = {"user": [], "petId": []}
@@ -78,13 +86,13 @@ def getSimilarity():
 
         df_cd = pd.merge(df, df2, how='inner', on='petId')
         print(df2)
-        tdf = TfidfVectorizer(min_df=2, max_df=0.7)
+        # tdf = TfidfVectorizer(min_df=2, max_df=0.7)
 
-        import nltk
-        from nltk.corpus import stopwords
-        print(stopwords.fileids())
-        stop_words = set(stopwords.words('arabic'))
-        print(stop_words)
+        # import nltk
+        # from nltk.corpus import stopwords
+        # print(stopwords.fileids())
+        # stop_words = set(stopwords.words('arabic'))
+        # print(stop_words)
 
         # vectorizer = TfidfVectorizer(
         #     lowercase=False, use_idf=True, stop_words=stop_words)
@@ -141,12 +149,12 @@ def getSimilarity():
         for i in likeCategory.mean().values:
             Weight.append(i)
 
-        Weight
-        merged_df = pd.concat([pd.DataFrame(color)])
-        merged_df
-        merged_df.merge(pd.DataFrame(breed))
+        # Weight
+        # merged_df = pd.concat([pd.DataFrame(color)])
+        # merged_df
+        # merged_df.merge(pd.DataFrame(breed))
 
-        merged_df.merge(pd.DataFrame(age), left_index=True, right_index=True, )
+        # merged_df.merge(pd.DataFrame(age), left_index=True, right_index=True, )
 
         from functools import reduce
 
@@ -265,12 +273,17 @@ def getSimilarity():
             total_score_norm, index=return_like_pet_for_all_most_sim_users.columns, columns=['score'])
 
         rec2 = rec2.sort_values(by=['score'], ascending=False)[:n]
+        print(rec2)
+        df6 = df[df['isAdopted'] == True]
+        petid_adopted2 = df6['petId']
+        rec2 = rec2[~rec2.index.isin(petid_adopted2)]
 
         Collaborative_filtering = []
         for index, row in rec2.iterrows():
             print(index)
             if (row['score'] > 0):
                 Collaborative_filtering.append(index)
+
         if (len(Collaborative_filtering) == 0):
             print(f' collbrative recommander is empty? {True}')
             Collaborative_filtering = least_like
@@ -278,4 +291,5 @@ def getSimilarity():
     return {"similarity_pets": recommandation, "similarity_users": Collaborative_filtering}
 
 
-app.run(port=5002, debug=True)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0")
