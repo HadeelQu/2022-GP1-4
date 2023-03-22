@@ -151,6 +151,9 @@ class _MyRequestsState extends State<MyRequests> {
       [String request_id = ""]) {
     if (status == "مرفوض") {
       return const SizedBox();
+    } else if (status == "قيد المعالجة" &&
+        _selectedType == "الطلبات المستقبلة") {
+      return const SizedBox();
     } else if (status == "قيد المعالجة" && _selectedType == "الطلبات المرسلة") {
       return Container(
         width: button_size,

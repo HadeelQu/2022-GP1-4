@@ -32,7 +32,7 @@ def getSimilarity():
             firebase_admin.initialize_app(cred)
 
         db = firestore.client()
-        # Get all prt from firebase
+        # Get all pet from firebase
         pets = list(db.collection('pets').stream())
         most_like = []
         # Get the most ten like pet
@@ -58,12 +58,10 @@ def getSimilarity():
         print(df['gender'])
         request_data = request.data
         request_data = json.loads(request_data.decode('utf-8'))
-        #name = request_data['name']
-        #p = request_data['personality']
-        # print(p)
         # get the user id of the active user
         print(request_data['userID'])
         df.info()
+        # initialize dataframe to save each pet and who like this pet
         data2 = {"user": [], "petId": []}
         df2 = pd.DataFrame(data2)
         df2
@@ -74,7 +72,7 @@ def getSimilarity():
             print(row['likedUsers'])
             for j in row['likedUsers']:
                 print(j)
-
+        # get like user for eavh pet and save it ti the previous datafram
         for index, row in df.iterrows():
             petid = row['petId']
             for j in row['likedUsers']:
@@ -86,21 +84,7 @@ def getSimilarity():
 
         df_cd = pd.merge(df, df2, how='inner', on='petId')
         print(df2)
-        # tdf = TfidfVectorizer(min_df=2, max_df=0.7)
-
-        # import nltk
-        # from nltk.corpus import stopwords
-        # print(stopwords.fileids())
-        # stop_words = set(stopwords.words('arabic'))
-        # print(stop_words)
-
-        # vectorizer = TfidfVectorizer(
-        #     lowercase=False, use_idf=True, stop_words=stop_words)
-        #
-        # df['personalites'] = df['personalites'].apply(str)
-        # vectors = vectorizer.fit_transform(df['personalites'])
-        # feature_names = vectorizer.get_feature_names()
-        # print(feature_names)
+       # get like list for this user
         df_cd = pd.merge(df, df2, how='inner', on='petId')
         likeList = df_cd.loc[df_cd['user'] == request_data['userID']]
         print(likeList.empty)
@@ -110,6 +94,7 @@ def getSimilarity():
         import numpy as np
 
         copy = likeList.copy(deep=True)
+        # genrate crosee tab to encode the
         color = pd.crosstab(df['petId'], df['color'])
 
         color
