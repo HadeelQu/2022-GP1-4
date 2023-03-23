@@ -206,10 +206,12 @@ class _listView extends State<listView> {
                     ),
                   ),
                   onTap: () {
-                    _auth.signOut();
-                    Navigator.popUntil(context, (route) => route.isFirst);
-                    Navigator.pushReplacementNamed(
-                        context, HomePage.screenRoute);
+                    setState(() {
+                      _auth.signOut();
+                      Navigator.popUntil(context, (route) => route.isFirst);
+                      Navigator.pushReplacementNamed(
+                          context, HomePage.screenRoute);
+                    });
                   }),
             ],
           );
