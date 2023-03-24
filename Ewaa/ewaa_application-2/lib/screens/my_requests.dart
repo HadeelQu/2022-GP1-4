@@ -115,7 +115,9 @@ class _MyRequestsState extends State<MyRequests> {
 
   Future<void> _makePhoneCall(String phoneNumber) async {
     final Uri launchUri = Uri(
+      // to open phone applicatio we set  scheme: 'tel'
       scheme: 'tel',
+      // I set this number as the path where the phone application should open it
       path: phoneNumber,
     );
     await launchUrl(launchUri);
@@ -593,6 +595,7 @@ class _MyRequestsState extends State<MyRequests> {
             ),
           )
         ],
+        // kkk
       ),
     ));
   }
