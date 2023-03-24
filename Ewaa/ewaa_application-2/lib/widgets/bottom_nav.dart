@@ -74,9 +74,11 @@ class BottomNav extends StatelessWidget {
                   stream: getNewNotifications(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
+                      // There is no notification that the user does not see, so the notification icon does not turn red if there is no notification 
                       if (snapshot.data!.docs.isEmpty) {
                         return const Icon(Icons.notifications);
                       } else {
+                        // The notification icon turns red when a user has not seen a notification, and the number of unseen notifications is displayed. 
                         return Stack(
                           children: [
                             const Icon(
