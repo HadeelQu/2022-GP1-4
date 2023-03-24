@@ -35,6 +35,7 @@ class BottomNav extends StatelessWidget {
       return 0;
     }
 
+// get all notfication that user does not seen
     getNewNotifications() {
       return FirebaseFirestore.instance
           .collection("notifications")

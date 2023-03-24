@@ -140,8 +140,7 @@ class _ListPetsPage extends State<ListPetsPage> {
               ),
               child: InkWell(
                 onTap: () {
-                  Navigator.pushReplacementNamed(
-                      context, SearchPage.screenRoute);
+                  Navigator.pushNamed(context, SearchPage.screenRoute);
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -164,8 +163,7 @@ class _ListPetsPage extends State<ListPetsPage> {
                         color: Colors.black.withOpacity(0.6),
                       ),
                       onPressed: () {
-                        Navigator.pushReplacementNamed(
-                            context, SearchPage.screenRoute);
+                        Navigator.pushNamed(context, SearchPage.screenRoute);
                       },
                     ),
                   ],

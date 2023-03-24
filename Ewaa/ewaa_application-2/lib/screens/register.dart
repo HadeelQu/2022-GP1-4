@@ -183,6 +183,7 @@ class _RegisterState extends State<Register> {
                       ),
                       TextFields("البريد الالكتروني", Icons.email,
                           TextInputType.emailAddress, _email, (email) {
+                        //  EmailValidator class will be used to validate the email address. It returns a bool value; if the email address is valid, the returned value is true; otherwise, the returned value is false.
                         bool isvalid = EmailValidator.validate(email!);
                         print(isvalid);
                         if (email.isEmpty) {
@@ -197,6 +198,7 @@ class _RegisterState extends State<Register> {
                       ),
                       TextFields("رقم الهاتف", Icons.phone, TextInputType.phone,
                           _phoneNumber, (phoneNumber) {
+                        // to check if the phone number is saudi we used RegExp
                         var regex = RegExp(
                             r"^(009665|9665|\+9665|05|5)(5|0|3|6|4|9|1|8|7)([0-9]{7})$");
                         String patttern = r'(^[0-9]*$)';

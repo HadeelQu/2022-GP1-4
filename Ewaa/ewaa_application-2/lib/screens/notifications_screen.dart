@@ -23,6 +23,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   final _firestore = FirebaseFirestore.instance;
 
   getNotificationSource() {
+    // Get all notifications sent to me from new to oldest
     return _firestore
         .collection("notifications")
         .where("to", arrayContains: _auth.currentUser!.uid)
@@ -31,6 +32,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   updateNotificationsToSeen() {
+    // and because the user open the notification page we will update status of all notfication that send to this user to be "seen"
     _firestore
         .collection("notifications")
         .where("to", arrayContains: _auth.currentUser!.uid)
@@ -45,6 +47,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     });
   }
 
+// method to delete all notifaction that send to this user
   deleteAllNotifications() {
     _firestore
         .collection("notifications")
@@ -59,6 +62,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     });
   }
 
+//  delete specific notification
   deleteNotification(id) async {
     _firestore.collection("notifications").doc(id).delete();
   }
@@ -90,6 +94,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 padding: const EdgeInsets.only(left: 18.0),
                 child: Container(
                     height: 30,
+                    // button to delete all notfication send to this user
                     child: MyButton2(
                         color: Style.buttonColor_pink,
                         title: "إزالة الكل",
@@ -180,6 +185,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                   ),
                                   IconButton(
                                       onPressed: () {
+                                        // buuton to delete this notification
                                         deleteNotification(notification.id);
                                       },
                                       icon: Icon(

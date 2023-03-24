@@ -24,7 +24,7 @@ class _RequestsLogState extends State<RequestsLog> {
   final _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
   double button_size = 40;
-
+// the widget of satue of request
   Widget statusChip(String status) {
     return Container(
       width: 100,

@@ -426,32 +426,33 @@ class _AdoptionRequestInfoState extends State<AdoptionRequestInfo> {
                             ),
                             Align(
                               child: Container(
-                                  alignment: Alignment.center,
-                                  padding: EdgeInsets.all(13),
-                                  decoration: new BoxDecoration(
-                                    color: Style.textFieldsColor_lightpink
-                                        .withOpacity(0.8),
-                                    border: Border.all(
-                                        color: Colors.black.withOpacity(0.2),
-                                        width: 2),
-                                    borderRadius: new BorderRadius.all(
-                                        Radius.elliptical(2, 10)),
-                                  ),
-                                  child: petInfo.get("petName") != ""
-                                      ? Text(
-                                          " معلومات مقدم طلب التبني لـ " +
-                                              petInfo.get("petName"),
-                                          style: TextStyle(
-                                              fontSize: 19,
-                                              fontWeight: FontWeight.bold,
-                                              fontFamily: 'ElMessiri',
-                                              color: Style.purpole))
-                                      : Text(" معلومات مقدم طلب التبني  ",
-                                          style: TextStyle(
-                                              fontSize: 19,
-                                              fontWeight: FontWeight.bold,
-                                              fontFamily: 'ElMessiri',
-                                              color: Style.purpole))),
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.all(13),
+                                decoration: new BoxDecoration(
+                                  color: Style.textFieldsColor_lightpink
+                                      .withOpacity(0.8),
+                                  border: Border.all(
+                                      color: Colors.black.withOpacity(0.2),
+                                      width: 2),
+                                  borderRadius: new BorderRadius.all(
+                                      Radius.elliptical(2, 10)),
+                                ),
+                                child: petInfo.get("petName") != ""
+                                    ? Text(
+                                        " معلومات المتقدم لطلب تبني " +
+                                            petInfo.get("petName"),
+                                        style: TextStyle(
+                                            fontSize: 19,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'ElMessiri',
+                                            color: Style.purpole))
+                                    : Text(" معلومات المتقدم لطلب التبني ",
+                                        style: TextStyle(
+                                            fontSize: 19,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'ElMessiri',
+                                            color: Style.purpole)),
+                              ),
                             ),
                             SizedBox(
                               height: 12,

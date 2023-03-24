@@ -104,18 +104,21 @@ class _LoginState extends State<Login> {
               .signInWithEmailAndPassword(
                   email: _email.text.trim(), password: _passward.text.trim())
               .then((value) {
+            // if user not Verified his /her email then we will display the message to user to indicate his/her account not Verified then they can not login
             if (value.user?.emailVerified == false) {
               showDialog(
                   context: context,
                   builder: (context) => ShowAuthDialog(
                       "الحساب غير مفعل \n يرجى مراجعة بريدك لتفعيل الحساب"));
             } else {
+              // else if user email is Verified and then check if adoption information is empty
               FirebaseFirestore.instance
                   .collection("Users")
                   .doc(value.user!.uid)
                   .get()
                   .then((info) {
                 var data = info.data();
+                // The user will be redirected to the adoption form if adoption information is empty and the parameter "after_login" will be set to true.
                 if (data!['adoption_info'] == null) {
                   Navigator.push(
                     context,
@@ -126,6 +129,7 @@ class _LoginState extends State<Login> {
                     ),
                   );
                 } else {
+                  // if adoption information is not  empty it will redirected to Home page immeditly
                   Navigator.pushNamedAndRemoveUntil(
                       context, HomePage.screenRoute, (route) => route.isFirst);
                 }
@@ -188,6 +192,7 @@ class _LoginState extends State<Login> {
                         TextInputType.emailAddress,
                         _email,
                         (email) {
+                          // EmaillVaildator will check if emaill is correct
                           bool isvalid = EmailValidator.validate(email!);
                           print(isvalid);
                           if (email.isEmpty) {
