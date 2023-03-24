@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ewaa_application/screens/profile.dart';
 import 'package:ewaa_application/style.dart';
 import 'package:ewaa_application/widgets/button.dart';
 import 'package:ewaa_application/widgets/custom_app_bar.dart';
@@ -207,7 +208,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         // image
       }).then((value) {
         Navigator.of(context).pop();
-
+        Navigator.pushReplacementNamed(context, ProfilePage.screenRoute);
         Fluttertoast.showToast(
             msg: "تم تحديث المعلومات بنجاح",
             toastLength: Toast.LENGTH_LONG,

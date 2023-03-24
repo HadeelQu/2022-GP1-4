@@ -4,6 +4,8 @@ import 'package:ewaa_application/style.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../screens/home.dart';
+
 AppBar getCustomAppBar(BuildContext context) {
   var _auth = FirebaseAuth.instance;
   return AppBar(
@@ -87,7 +89,7 @@ AppBar getProfilePageAppBar(BuildContext context) {
               size: 30,
             ),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pushReplacementNamed(context, HomePage.screenRoute);
             }),
       ]);
 }
