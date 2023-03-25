@@ -10,9 +10,8 @@ is an android mobile application that provides a platform to increase awareness 
 
 **Ewaa application will be programmed using:** <br/>
 1- Dart programming language and flutter framework.<br/>
-2- Firebase Database.
-3- Python for recommander system
-<br/>
+2- Firebase Database.<br/>
+3- Python for recommander system<br/>
 
 ## 📱 launching instructions form visual studio code:
 
