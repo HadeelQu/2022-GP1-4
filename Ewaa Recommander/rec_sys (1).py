@@ -134,13 +134,6 @@ def getSimilarity():
         for i in likeCategory.mean().values:
             Weight.append(i)
 
-        # Weight
-        # merged_df = pd.concat([pd.DataFrame(color)])
-        # merged_df
-        # merged_df.merge(pd.DataFrame(breed))
-
-        # merged_df.merge(pd.DataFrame(age), left_index=True, right_index=True, )
-
         from functools import reduce
 
         # define list of DataFrames
@@ -178,7 +171,6 @@ def getSimilarity():
             print(f' content recommander is empty? {True}')
             recommandation = most_like
 
-        ##respone = f'hi {name}! this is python'
         print(recommandation)
 
         ###### Collabrative #####################
