@@ -23,7 +23,7 @@ class NotificationService {
 
               channelShowBadge: true),
         ]);
-
+// get premision from user 
     await AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
       isNotifAllowed = isAllowed;
       if (!isAllowed) {

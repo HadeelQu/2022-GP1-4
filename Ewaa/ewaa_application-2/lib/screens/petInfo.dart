@@ -81,9 +81,6 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
         .collection("pets")
         .doc(widget.petId)
         .snapshots();
-    // .where("petId", isEqualTo: widget.petId)
-    // .where("likedUsers", arrayContains: _auth.currentUser?.uid)
-    // .snapshots();
   }
 
   checkIfAdopter() {
@@ -123,6 +120,7 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
       setState(() {
         userData = value.data();
       });
+      // if adoption info is not null then we will be send request by using  some of these information
 
       if (userData["adoption_info"] != null) {
         var request_info = userData["adoption_info"];
@@ -159,6 +157,7 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
                 .doc(request_info["request_id"])
                 .set(notification);
             // send fcm message
+            // send nothification to owner about request
             var to = [];
             to.add(request_info["owner_id"]);
             NotificationService().sendNotification("طلب تبني جديد",
@@ -336,10 +335,13 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
     var userID = [_auth.currentUser?.uid];
     print(isLiked);
     if (isLiked) {
+      // if isLiked is true that mean user want to likethis pet
       FirebaseFirestore.instance
           .collection("pets")
           .doc(widget.petId)
+          // add this user to likedusers for this pet
           .update({"likedUsers": FieldValue.arrayUnion(userID)});
+      // add this pet to likedPets list for this user
       FirebaseFirestore.instance
           .collection("Users")
           .doc(_auth.currentUser?.uid)
@@ -348,10 +350,13 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
       });
 
       setState(() {
+        // It means that the user likes this pet, so the heart button will be red
         isNotLike = false;
+        // increase the number of liked for this pet
         numberOfUserLike += 1;
       });
     } else {
+      // that mean the user want to remove like from this pet
       FirebaseFirestore.instance
           .collection("pets")
           .doc(widget.petId)
@@ -363,7 +368,9 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
         "likedPets": FieldValue.arrayRemove([widget.petId])
       });
       setState(() {
+        // It means that the user remove likes from  this pet
         isNotLike = true;
+        // decrese the number of liked for this pet
         numberOfUserLike -= 1;
       });
     }
@@ -538,6 +545,7 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
                               Row(
                                 children: [
                                   Text(numberOfUserLike.toString()),
+                                  // when user was like this pet then the hear button will be red
                                   !isNotLike && _auth.currentUser != null
                                       ? IconButton(
                                           icon: Icon(
@@ -546,6 +554,7 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
                                             size: 30,
                                           ),
                                           onPressed: () {
+                                            // when user click this button then that mean he/she want to remove like from this pet that why we send false to like method
                                             Like(false);
                                           },
                                         )
@@ -558,6 +567,7 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
                                               ),
                                               onPressed: () {
                                                 print(_auth.currentUser);
+                                                // when user click this button then that mean he/she want to add   this pet to favorite list  that why we send true to like method
                                                 Like(true);
                                               },
                                             )
@@ -872,6 +882,7 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
                                       : "ارسال طلب التبني",
                               onPeressed: () {
                                 try {
+                                  // if user not login then we will redirected to login page
                                   if (_auth.currentUser == null) {
                                     Navigator.push(
                                       context,
@@ -881,6 +892,7 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
                                     );
                                     return;
                                   }
+                                  // if that pet is my pet then there a edit button insated of send request button
                                   if (IssameUser) {
                                     Navigator.push(
                                       context,
@@ -891,6 +903,7 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
                                         ),
                                       ),
                                     );
+                                    // if I was send request to this pet previsoly then there a  button to view the inormation of request insated of send request button
                                   } else if (adoptionState) {
                                     Navigator.push(
                                       context,
@@ -902,6 +915,7 @@ class _PetInfoState extends State<PetInfo> with TickerProviderStateMixin {
                                       ),
                                     );
                                   } else {
+                                    // button to send request
                                     send();
                                   }
                                 } catch (e) {}
