@@ -362,21 +362,25 @@ class _AdoptionRequestInfoState extends State<AdoptionRequestInfo> {
           ],
         );
       } else {
-        return Container(
-          padding: EdgeInsets.all(4),
-          decoration: BoxDecoration(
+        return Expanded(
+          child: Container(
+            alignment: Alignment.center,
+            padding: EdgeInsets.all(15),
+            decoration: new BoxDecoration(
               color: Colors.red,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Style.textFieldsColor_lightpink)),
-          child: Center(
+              borderRadius: new BorderRadius.all(Radius.elliptical(2, 10)),
+            ),
             child: Text(
-              "طلبك مرفوض",
+              "تم رفض الطلب",
               style: TextStyle(
-                  fontFamily: 'ElMessiri', fontSize: 18, color: Colors.white),
+                  fontSize: 16,
+                  fontFamily: 'ElMessiri',
+                  color: Colors.white,
+                  fontWeight: FontWeight.normal),
+              textAlign: TextAlign.center,
             ),
           ),
         );
-        ;
       }
     }
   }
