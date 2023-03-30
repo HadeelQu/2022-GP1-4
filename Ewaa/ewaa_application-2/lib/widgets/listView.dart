@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ewaa_application/screens/addP.dart';
+import 'package:ewaa_application/screens/history.dart';
 import 'package:ewaa_application/screens/home.dart';
 import 'package:ewaa_application/screens/login.dart';
 import 'package:ewaa_application/screens/my_pets_screen.dart';
@@ -142,7 +143,7 @@ class _listView extends State<listView> {
                   color: Style.purpole,
                 ),
                 title: const Text(
-                  'حيواناتي',
+                  "حيواناتي الأليفة المضافة",
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 15,
@@ -155,24 +156,24 @@ class _listView extends State<listView> {
                   Navigator.pushNamed(context, MyPetsPage.screenRoute);
                 },
               ),
-              // ListTile(
-              //   leading: Icon(
-              //     Icons.history,
-              //     color: Style.purpole,
-              //   ),
-              //   title: const Text(
-              //     'العمليات السابقة',
-              //     style: TextStyle(
-              //       color: Colors.black,
-              //       fontSize: 15,
-              //       fontFamily: 'ElMessiri',
-              //       fontWeight: FontWeight.w200,
-              //     ),
-              //   ),
-              //   onTap: () {
-              //     Navigator.pushNamed(context, RequestsLog.screenRoute);
-              //   },
-              // ),
+              ListTile(
+                leading: Icon(
+                  Icons.history,
+                  color: Style.purpole,
+                ),
+                title: const Text(
+                  "عملياتي السابقة في التبني",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                    fontFamily: 'ElMessiri',
+                    fontWeight: FontWeight.w200,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pushNamed(context, History.screenRoute);
+                },
+              ),
               // ListTile(
               //   leading: Icon(
               //     Icons.help,

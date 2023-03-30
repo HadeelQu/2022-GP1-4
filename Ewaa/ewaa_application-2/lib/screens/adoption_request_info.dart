@@ -305,7 +305,27 @@ class _AdoptionRequestInfoState extends State<AdoptionRequestInfo> {
           ],
         );
       } else {
-        return buildSectionTitle(context, "تم رفض الطلب");
+        //------------------------------------------------------------------------------
+        // return buildSectionTitle(context, "تم رفض الطلب");
+        return Expanded(
+          child: Container(
+            alignment: Alignment.center,
+            padding: EdgeInsets.all(15),
+            decoration: new BoxDecoration(
+              color: Colors.red,
+              borderRadius: new BorderRadius.all(Radius.elliptical(2, 10)),
+            ),
+            child: Text(
+              "تم رفض الطلب",
+              style: TextStyle(
+                  fontSize: 16,
+                  fontFamily: 'ElMessiri',
+                  color: Colors.white,
+                  fontWeight: FontWeight.normal),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
       }
     } else {
       if (requestInfo.get("status") == "قيد المعالجة") {

@@ -2,6 +2,7 @@ import 'package:ewaa_application/screens/profile.dart';
 import 'package:ewaa_application/screens/register.dart';
 import 'package:ewaa_application/style.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ewaa_application/screens/login.dart';
 import 'package:flutter/material.dart';
 
 import '../screens/home.dart';
@@ -23,7 +24,7 @@ AppBar getCustomAppBar(BuildContext context) {
           ),
           onPressed: () {
             if (_auth.currentUser == null) {
-              Navigator.pushNamed(context, Register.screenRoute);
+              Navigator.pushNamed(context, Login.screenRoute);
             } else {
               Navigator.pushNamed(context, ProfilePage.screenRoute);
             }
@@ -111,7 +112,7 @@ AppBar getBasicAppBar(BuildContext context) {
             ),
             onPressed: () {
               if (_auth.currentUser == null) {
-                Navigator.pushNamed(context, Register.screenRoute);
+                Navigator.pushNamed(context, Login.screenRoute);
               } else {
                 Navigator.pushNamed(context, ProfilePage.screenRoute);
               }

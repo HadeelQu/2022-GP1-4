@@ -37,7 +37,7 @@ class _AdoptionFormState extends State<AdoptionForm> {
   var hasApet;
   var hasAllergy;
   var jobState;
-  var selectedJobId = 1;
+  var selectedJobId;
   List<dynamic> jobList = [];
 
   bool _isloading = false;

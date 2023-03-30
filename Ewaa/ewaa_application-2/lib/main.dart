@@ -22,6 +22,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'screens/adoption_form.dart';
 import 'screens/my_pets_screen.dart';
 import 'screens/requests_log.dart';
+import 'screens/history.dart';
 
 var fcm = FirebaseMessaging.instance;
 
@@ -144,6 +145,7 @@ class MyApp extends StatelessWidget {
         RequestsLog.screenRoute: (context) => RequestsLog(),
         AdoptionForm.screenRoute: (context) => AdoptionForm(),
         NotificationsScreen.screenRoute: (context) => NotificationsScreen(),
+        History.screenRoute: (context) => History(),
       },
     );
   }

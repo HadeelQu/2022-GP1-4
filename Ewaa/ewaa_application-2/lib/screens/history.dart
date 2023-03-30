@@ -9,71 +9,38 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../style.dart';
 import '../widgets/button.dart';
 
-class MyPetsPage extends StatefulWidget {
-  static const String screenRoute = "mypets_page";
+class History extends StatefulWidget {
+  static const String screenRoute = "history_page";
 
   @override
-  State<MyPetsPage> createState() => _MyPetsPage();
+  State<History> createState() => _History();
 }
 
-class _MyPetsPage extends State<MyPetsPage> {
+class _History extends State<History> {
   final title;
-  String _selectedType = "المتوفرة للتبني";
-  _MyPetsPage({this.title = ''});
+  String _selectedType = "حيوانات تبنيتها";
+  _History({this.title = ''});
 
   final _auth = FirebaseAuth.instance;
   late ScrollController sc;
   bool isLoading = false;
   var petname;
   getAllMyPets() {
-    if (_selectedType == "المتوفرة للتبني") {
+    if (_selectedType == "حيوانات تبنيتها") {
       return FirebaseFirestore.instance
           .collection("pets")
           .where('ownerId', isEqualTo: _auth.currentUser!.uid)
-          .where('isAdopted', isEqualTo: false)
+          .where('isAdopted', isEqualTo: true)
+          .orderBy("addedAt", descending: true)
+          .snapshots();
+    } else {
+      return FirebaseFirestore.instance
+          .collection("pets")
+          .where('old_owner', isEqualTo: _auth.currentUser!.uid)
+          .where('isAdopted', isEqualTo: true)
           .orderBy("addedAt", descending: true)
           .snapshots();
     }
-  }
-
-  deleteMyPet(petId) async {
-    await FirebaseFirestore.instance.collection("pets").doc(petId).delete();
-
-    await FirebaseFirestore.instance
-        .collection("adoption_requests")
-        .where("pet_id", isEqualTo: petId)
-        .get()
-        .then((pets) {
-      for (DocumentSnapshot doc in pets.docs) {
-        doc.reference.delete();
-      }
-    });
-
-    await deletePetFromLiked(petId);
-
-    Fluttertoast.showToast(
-        msg: " تم الحذف بنجاح ",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 2,
-        backgroundColor: Style.textFieldsColor_lightpink,
-        textColor: Style.purpole,
-        fontSize: 16.0);
-  }
-
-  deletePetFromLiked(petId) async {
-    await FirebaseFirestore.instance
-        .collection("Users")
-        .where("likedPets", arrayContains: petId)
-        .get()
-        .then((users) {
-      for (var user in users.docs) {
-        FirebaseFirestore.instance
-            .collection("Users")
-            .doc(user.id)
-            .update({"likedPets": FieldValue.arrayRemove(petId)});
-      }
-    });
   }
 
   Widget typeChip(String type) {
@@ -84,7 +51,7 @@ class _MyPetsPage extends State<MyPetsPage> {
         });
       },
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 38),
         decoration: BoxDecoration(
             color: type == _selectedType
                 ? Style.buttonColor_pink
@@ -155,11 +122,27 @@ class _MyPetsPage extends State<MyPetsPage> {
             Container(
               alignment: Alignment.topRight,
               padding: EdgeInsets.only(right: 20),
-              child: Text("حيواناتي الأليفة المضافة",
+              child: Text("عملياتي السابقة في التبني",
                   style: Theme.of(context).textTheme.headline4),
             ),
             SizedBox(
               height: 10,
+            ),
+            Container(
+              height: 50,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  SizedBox(
+                    width: 10,
+                  ),
+                  typeChip("حيوانات تبنيتها"),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  typeChip("حيوانات تم تبنيها مني"),
+                ],
+              ),
             ),
             SizedBox(
               height: 10,
@@ -285,168 +268,6 @@ class _MyPetsPage extends State<MyPetsPage> {
                                                   SizedBox(
                                                     height: 40,
                                                   ),
-                                                  _selectedType !=
-                                                          "المتوفرة للتبني"
-                                                      ? const SizedBox()
-                                                      : Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            InkWell(
-                                                              onTap: () {
-                                                                showDialog(
-                                                                  context:
-                                                                      context,
-                                                                  builder:
-                                                                      (con) {
-                                                                    return AlertDialog(
-                                                                      title:
-                                                                          Text(
-                                                                        'هل تريد حذف الحيوان',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color:
-                                                                              Style.black,
-                                                                          fontFamily:
-                                                                              'ElMessiri',
-                                                                          fontSize:
-                                                                              14,
-                                                                        ),
-                                                                      ),
-                                                                      actions: [
-                                                                        InkWell(
-                                                                          onTap:
-                                                                              () {
-                                                                            Navigator.pop(con);
-                                                                          },
-                                                                          child:
-                                                                              Container(
-                                                                            padding:
-                                                                                const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
-                                                                            decoration:
-                                                                                BoxDecoration(
-                                                                              color: Style.buttonColor_pink,
-                                                                              borderRadius: BorderRadius.circular(8.0),
-                                                                            ),
-                                                                            child:
-                                                                                const Text(
-                                                                              'إلغاء',
-                                                                              style: TextStyle(
-                                                                                color: Colors.white,
-                                                                                fontFamily: 'ElMessiri',
-                                                                                fontSize: 14,
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        InkWell(
-                                                                          onTap:
-                                                                              () async {
-                                                                            setState(() {
-                                                                              isLoading = true;
-                                                                            });
-                                                                            await deleteMyPet(doucument['petId']);
-                                                                            Navigator.pop(con);
-                                                                            setState(() {
-                                                                              isLoading = false;
-                                                                            });
-                                                                          },
-                                                                          child:
-                                                                              Container(
-                                                                            padding:
-                                                                                const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
-                                                                            decoration:
-                                                                                BoxDecoration(
-                                                                              color: Style.buttonColor_pink,
-                                                                              borderRadius: BorderRadius.circular(8.0),
-                                                                            ),
-                                                                            child:
-                                                                                const Text(
-                                                                              'حذف',
-                                                                              style: TextStyle(
-                                                                                color: Colors.white,
-                                                                                fontFamily: 'ElMessiri',
-                                                                                fontSize: 14,
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    );
-                                                                  },
-                                                                );
-                                                              },
-                                                              child: Container(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                              .all(
-                                                                          5),
-                                                                  decoration:
-                                                                      const BoxDecoration(
-                                                                    color: Color
-                                                                        .fromARGB(
-                                                                            255,
-                                                                            222,
-                                                                            10,
-                                                                            10),
-                                                                    shape: BoxShape
-                                                                        .circle,
-                                                                  ),
-                                                                  child:
-                                                                      const Icon(
-                                                                    Icons
-                                                                        .delete,
-                                                                    size: 22,
-                                                                    color: Colors
-                                                                        .white,
-                                                                  )),
-                                                            ),
-                                                            SizedBox(width: 20),
-                                                            InkWell(
-                                                              onTap: () {
-                                                                Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            EditPetInfo(
-                                                                      petId: doucument[
-                                                                          'petId'],
-                                                                      owner: doucument[
-                                                                          'ownerId'],
-                                                                    ),
-                                                                  ),
-                                                                );
-                                                              },
-                                                              child: Container(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                              .all(
-                                                                          5),
-                                                                  decoration:
-                                                                      const BoxDecoration(
-                                                                    color: Color
-                                                                        .fromARGB(
-                                                                            255,
-                                                                            157,
-                                                                            179,
-                                                                            191),
-                                                                    shape: BoxShape
-                                                                        .circle,
-                                                                  ),
-                                                                  child:
-                                                                      const Icon(
-                                                                    Icons.edit,
-                                                                    size: 22,
-                                                                    color: Colors
-                                                                        .white,
-                                                                  )),
-                                                            ),
-                                                            SizedBox(
-                                                                width: 8.0),
-                                                          ],
-                                                        )
                                                 ],
                                               ),
                                             ),
