@@ -71,7 +71,8 @@ class _ForgfetPasswardState extends State<ForgfetPassward> {
                 elevation: 0.0,
                 iconTheme: IconThemeData(color: Style.black, size: 28),
                 toolbarHeight: 75,
-                actions: [
+                leading: Text(""),
+                actions: <Widget>[
                   IconButton(
                       icon: Icon(
                         Icons.arrow_forward_sharp,
