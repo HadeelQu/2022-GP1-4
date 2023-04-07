@@ -71,7 +71,7 @@ class _RegisterState extends State<Register> {
 
         break;
       case "[firebase_auth/weak-password]":
-        errorAfterTranslate = "كلمة المرور يجب ان تكون اكثر من ٥ احرف";
+        errorAfterTranslate = "كلمة المرور يجب ان تكون اكثر من خمسةاحرف";
         break;
       default:
         errorAfterTranslate = "غير معروف";
