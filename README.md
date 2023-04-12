@@ -1,4 +1,8 @@
-![Ewaa logo](images/Picture1.png)
+
+<p align="center">
+<img src ="images/Picture1.png" alt="Ewaa" height="180" >
+</p>
+
 
 # 🌟 About Ewaa - إيواء
 
