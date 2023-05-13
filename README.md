@@ -31,15 +31,12 @@ is an android mobile application that provides a platform to increase awareness 
 
 ## 📁 launching instructions from APK:
 
-**Install the EWAA APK files on your Android smartphone or tablet directly from your browser:** <br/>
-
-1- Open your browser <br/>
-2- Find the APK file you want to download <br/>
-3- Click on the APK file and then click on **app-release.apk** it will start downloading <br/>  
- 4- Open Downloads <br/>
+**Install the Ewaa APK files on your Android smartphone :** <br/>
+1- Open **2022-GP1-4** repository on GitHub <br/>
+2- Click on the APK file and then click on **<4>\_<Ewaa>\_Executable.apk.zip** it will start downloading <br/>  
+3- Unzip the file <br/>
+4- Open Downloads <br/>
 5- Tap on the APK file and tap **Yes** when prompted <br/>
 6- The app will begin installing on your device. <br/> <br/>
 
-## 🔴 note: you can use the online emulator, check the link below:
 
-- [ApkOnline](https://chrome.google.com/webstore/detail/apkonline-apk-manager-for/lnhnebkkgjmlgomfkkmkoaefbknopmja)
