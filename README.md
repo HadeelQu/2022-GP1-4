@@ -31,7 +31,7 @@ is an android mobile application that provides a platform to increase awareness 
 
 ## 📁 launching instructions form APK:
 
-**Install the Elfaa APK files on your Android smartphone or tablet directly from your browser:** <br/>
+**Install the EWAA APK files on your Android smartphone or tablet directly from your browser:** <br/>
 
 1- Open your browser <br/>
 2- Find the APK file you want to download <br/>
