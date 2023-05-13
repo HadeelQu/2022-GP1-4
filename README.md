@@ -33,7 +33,7 @@ is an android mobile application that provides a platform to increase awareness 
 
 **Install the Ewaa APK files on your Android smartphone :** <br/>
 1- Open **2022-GP1-4** repository on GitHub <br/>
-2- Click on the APK file and then click on **<4>_<Ewaa>_Executable.apk.zip** it will start downloading 
+2- Click on the APK file and then click on **<4>_<Ewaa>_Executable.apk.zip** it will start downloading <br/>
 3- Unzip the file <br/>
 4- Open Downloads <br/>
 5- Tap on the APK file and tap **Yes** when prompted <br/>
